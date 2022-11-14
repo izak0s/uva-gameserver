@@ -10,20 +10,26 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import io.netty.util.CharsetUtil;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class PacketDecoder extends MessageToMessageDecoder<DatagramPacket> {
     @Override
-    protected void decode(ChannelHandlerContext channelHandlerContext, DatagramPacket datagramPacket, List<Object> list) throws Exception {
+    protected void decode(ChannelHandlerContext ctx, DatagramPacket dg, List<Object> list) throws Exception {
         System.out.println("DECODE!");
 
-        System.out.println(datagramPacket);
-        ByteBuf buf = datagramPacket.content();
+        System.out.println(dg.sender());
+        ByteBuf buf = dg.content();
         byte item = buf.readByte();
         System.out.println("Decoded byte: " + item);
 
         System.out.println("Readable" + buf.readableBytes());
         list.add(item);
+
+        ByteBuf output = Unpooled.buffer();
+        output.writeBytes("Kus".getBytes(StandardCharsets.UTF_8));
+        ctx.writeAndFlush(new DatagramPacket(output, dg.sender()));
+        System.out.println("Written");
     }
 
     @Override
