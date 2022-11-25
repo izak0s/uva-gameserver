@@ -1,5 +1,6 @@
 package amsterdam.izak.progproj.network.packets;
 
+import amsterdam.izak.progproj.NotImplementedException;
 import io.netty.buffer.ByteBuf;
 
 public abstract class Packet {
@@ -8,7 +9,7 @@ public abstract class Packet {
      *
      * @return ByteBuf object
      */
-    public abstract ByteBuf encode();
+    public abstract ByteBuf encode() throws Exception;
 
-    public abstract void decode(ByteBuf buf);
+    public abstract void decode(ByteBuf buf) throws Exception;
 }
