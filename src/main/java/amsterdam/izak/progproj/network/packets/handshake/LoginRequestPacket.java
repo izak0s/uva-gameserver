@@ -15,7 +15,7 @@ public class LoginRequestPacket extends Packet {
     private String username;
 
     @Override
-    public ByteBuf encode() throws Exception {
+    public void encode(ByteBuf buf) throws Exception {
         throw new NotImplementedException();
     }
 
