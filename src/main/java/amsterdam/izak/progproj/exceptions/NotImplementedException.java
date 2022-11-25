@@ -1,4 +1,4 @@
-package amsterdam.izak.progproj;
+package amsterdam.izak.progproj.exceptions;
 
 public class NotImplementedException extends Exception {
 

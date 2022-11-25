@@ -8,7 +8,6 @@ public class ChannelInitializer extends io.netty.channel.ChannelInitializer<Data
     protected void initChannel(DatagramChannel ch) {
         System.out.println("Initializing pipeline");
         ch.pipeline()
-                .addLast("encoder", new PacketEncoder())
                 .addLast("decoder", new PacketDecoder())
                 .addLast("handler", new PacketHandler());
     }

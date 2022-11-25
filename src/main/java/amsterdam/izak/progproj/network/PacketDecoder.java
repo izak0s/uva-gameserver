@@ -1,35 +1,46 @@
 package amsterdam.izak.progproj.network;
 
 
+import amsterdam.izak.progproj.GameServer;
+import amsterdam.izak.progproj.network.packets.Packet;
+import amsterdam.izak.progproj.network.types.Vars;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
-import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.MessageToMessageDecoder;
-import io.netty.util.CharsetUtil;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class PacketDecoder extends MessageToMessageDecoder<DatagramPacket> {
     @Override
     protected void decode(ChannelHandlerContext ctx, DatagramPacket dg, List<Object> list) throws Exception {
-        System.out.println("DECODE!");
-
         System.out.println(dg.sender());
         ByteBuf buf = dg.content();
-        byte item = buf.readByte();
-        System.out.println("Decoded byte: " + item);
 
-        System.out.println("Readable" + buf.readableBytes());
-        list.add(item);
+        // Early return empty packet
+        if (buf.readableBytes() <= 0)
+            return;
 
-        ByteBuf output = Unpooled.buffer();
-        output.writeBytes("Kus".getBytes(StandardCharsets.UTF_8));
-        ctx.writeAndFlush(new DatagramPacket(output, dg.sender()));
-        System.out.println("Written");
+        byte packet_id = Vars.BYTE.decode(buf);
+        Packet packet = GameServer.getInstance().getPacketManager()
+                .getPacket(GameState.HANDSHAKE, packet_id);
+
+        System.out.println(buf.readableBytes() + " READABLE");
+
+        // Decode packet
+        packet.decode(buf);
+
+        if (buf.readableBytes() != 0){
+            throw new Exception("Malformed packet");
+        }
+
+        System.out.println("Received packet" + packet.getClass().getName());
+        list.add(packet);
+
+//        ByteBuf output = Unpooled.buffer();
+//        output.writeBytes("Kus".getBytes(StandardCharsets.UTF_8));
+//        ctx.writeAndFlush(new DatagramPacket(output, dg.sender()));
+//        System.out.println("Written");
     }
 
     @Override

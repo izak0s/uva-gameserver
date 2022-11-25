@@ -1,7 +1,7 @@
-package amsterdam.izak.progproj.network.packets.types.impl;
+package amsterdam.izak.progproj.network.types.impl;
 
-import amsterdam.izak.progproj.network.packets.types.Type;
-import amsterdam.izak.progproj.network.packets.types.Vars;
+import amsterdam.izak.progproj.network.types.Type;
+import amsterdam.izak.progproj.network.types.Vars;
 import io.netty.buffer.ByteBuf;
 
 import java.nio.charset.StandardCharsets;
@@ -18,6 +18,7 @@ public class StringType implements Type<String> {
     @Override
     public String decode(ByteBuf buf) {
         int len = Vars.INT.decode(buf);
+
         String item = buf.toString(buf.readerIndex(), len, StandardCharsets.UTF_8);
         buf.skipBytes(len);
 

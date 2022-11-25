@@ -1,6 +1,6 @@
-package amsterdam.izak.progproj.network.packets.types.impl;
+package amsterdam.izak.progproj.network.types.impl;
 
-import amsterdam.izak.progproj.network.packets.types.Type;
+import amsterdam.izak.progproj.network.types.Type;
 import io.netty.buffer.ByteBuf;
 
 public class BoolType implements Type<Boolean> {

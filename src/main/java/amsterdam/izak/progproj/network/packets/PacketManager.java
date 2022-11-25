@@ -15,4 +15,13 @@ public class PacketManager {
         incoming_packets.put(GameState.HANDSHAKE, new Class[]{LoginRequestPacket.class});
         outgoing_packets.put(GameState.HANDSHAKE, new Class[]{LoginResponsePacket.class});
     }
+
+    public Packet getPacket(GameState state, short packetId) throws Exception {
+        Class<? extends Packet>[] list = incoming_packets.get(state);
+        if (packetId > list.length) {
+            throw new Exception("Unknown packet with id " + packetId);
+        }
+
+        return list[packetId].getDeclaredConstructor().newInstance();
+    }
 }

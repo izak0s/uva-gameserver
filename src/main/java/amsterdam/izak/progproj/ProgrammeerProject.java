@@ -5,7 +5,7 @@ import io.netty.channel.ChannelFuture;
 public class ProgrammeerProject {
 
     public static void main(String[] args) throws InterruptedException {
-        GameServer server = new GameServer(1337);
+        GameServer server = new GameServer();
         ChannelFuture future = server.start();
 
         System.out.println("Server started on port 1337");

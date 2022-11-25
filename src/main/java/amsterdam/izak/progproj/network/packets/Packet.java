@@ -1,6 +1,5 @@
 package amsterdam.izak.progproj.network.packets;
 
-import amsterdam.izak.progproj.NotImplementedException;
 import io.netty.buffer.ByteBuf;
 
 public abstract class Packet {

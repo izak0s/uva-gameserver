@@ -1,8 +1,8 @@
 package amsterdam.izak.progproj.network.packets.handshake;
 
-import amsterdam.izak.progproj.NotImplementedException;
+import amsterdam.izak.progproj.exceptions.NotImplementedException;
 import amsterdam.izak.progproj.network.packets.Packet;
-import amsterdam.izak.progproj.network.packets.types.Vars;
+import amsterdam.izak.progproj.network.types.Vars;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

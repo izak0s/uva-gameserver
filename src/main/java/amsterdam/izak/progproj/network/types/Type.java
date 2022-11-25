@@ -1,4 +1,4 @@
-package amsterdam.izak.progproj.network.packets.types;
+package amsterdam.izak.progproj.network.types;
 
 import io.netty.buffer.ByteBuf;
 
