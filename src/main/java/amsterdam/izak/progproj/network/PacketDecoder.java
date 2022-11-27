@@ -3,8 +3,10 @@ package amsterdam.izak.progproj.network;
 
 import amsterdam.izak.progproj.GameServer;
 import amsterdam.izak.progproj.network.packets.Packet;
+import amsterdam.izak.progproj.network.packets.handshake.LoginResponsePacket;
 import amsterdam.izak.progproj.network.types.Vars;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.handler.codec.MessageToMessageDecoder;
@@ -37,9 +39,12 @@ public class PacketDecoder extends MessageToMessageDecoder<DatagramPacket> {
         System.out.println("Received packet" + packet.getClass().getName());
         list.add(packet);
 
-//        ByteBuf output = Unpooled.buffer();
+        ByteBuf output = Unpooled.buffer();
+        Packet out = new LoginResponsePacket(true, "Kusje");
+        output.writeByte(0x00);
+        out.encode(output);
 //        output.writeBytes("Kus".getBytes(StandardCharsets.UTF_8));
-//        ctx.writeAndFlush(new DatagramPacket(output, dg.sender()));
+        ctx.writeAndFlush(new DatagramPacket(output, dg.sender()));
 //        System.out.println("Written");
     }
 

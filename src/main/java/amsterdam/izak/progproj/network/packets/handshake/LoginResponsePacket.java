@@ -7,10 +7,12 @@ import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString
 public class LoginResponsePacket extends Packet {
     private boolean authenticated;
     private String message;

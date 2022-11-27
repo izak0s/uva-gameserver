@@ -11,6 +11,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @NoArgsConstructor
+@ToString
 public class LoginRequestPacket extends Packet {
     private String username;
 
