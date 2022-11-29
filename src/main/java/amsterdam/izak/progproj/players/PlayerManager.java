@@ -1,6 +1,8 @@
 package amsterdam.izak.progproj.players;
 
 import java.net.InetSocketAddress;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -43,5 +45,9 @@ public class PlayerManager {
         int id =  connectionIdMap.get(address);
 
         return playerMap.get(id);
+    }
+
+    public Collection<Player> getPlayers(){
+        return this.playerMap.values();
     }
 }

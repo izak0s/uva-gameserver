@@ -12,7 +12,6 @@ public class GamePacketHandler {
 
         // 0x01 - Client move
         packetManager.registerListener(ClientMovePacket.class, packet -> {
-            System.out.println("Incoming move packet");
             System.out.println(packet);
 
             // Update player position
