@@ -15,7 +15,7 @@ public class InboundPacketChannelHandler extends SimpleChannelInboundHandler<Inc
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, IncomingPacketWrapper item) throws Exception {
-        System.out.println("Packet handler " + item);
+        System.out.println("Packet handler " + item.getPacket());
         manager.handlePacket(item);
 
         // Update last packet

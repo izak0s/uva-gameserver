@@ -25,9 +25,12 @@ public class PacketDecoder extends MessageToMessageDecoder<DatagramPacket> {
         if (buf.readableBytes() <= 0)
             return;
 
+        Player player = GameServer.getInstance().getPlayerManager().getPlayer(dg.sender());
+        GameState state = player == null ? GameState.HANDSHAKE : GameState.GAME;
+
         byte packet_id = Vars.BYTE.decode(buf);
         Packet packet = GameServer.getInstance().getPacketManager()
-                .getPacket(GameState.HANDSHAKE, packet_id);
+                .getPacket(state, packet_id);
 
         if (packet == null)
             throw new Exception("Unknown packet with id " + packet_id);
@@ -38,8 +41,6 @@ public class PacketDecoder extends MessageToMessageDecoder<DatagramPacket> {
         if (buf.readableBytes() != 0){
             throw new Exception("Malformed packet");
         }
-
-        Player player = GameServer.getInstance().getPlayerManager().getPlayer(dg.sender());
 
         IncomingPacketWrapper wrapper = new IncomingPacketWrapper(player, dg.sender(), packet);
 

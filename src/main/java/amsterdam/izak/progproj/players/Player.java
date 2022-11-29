@@ -8,6 +8,7 @@ import io.netty.channel.socket.DatagramPacket;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.net.InetSocketAddress;
 
@@ -18,6 +19,12 @@ public class Player {
     private final String username;
     private long lastPacket = -1;
     private GameState currentState;
+    @Setter
+    @Getter
+    private Position position;
+    @Getter
+    @Setter
+    private Position lastSentPosition;
 
     public Player(int id, InetSocketAddress address, String username) {
         this.id = id;
