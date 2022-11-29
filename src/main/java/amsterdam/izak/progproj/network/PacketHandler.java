@@ -7,8 +7,9 @@ import io.netty.channel.socket.DatagramPacket;
 
 public class PacketHandler extends SimpleChannelInboundHandler<Packet> {
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, Packet item) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, Packet item) throws Exception {
         System.out.println("Packet handler " + item);
+
     }
 
     @Override

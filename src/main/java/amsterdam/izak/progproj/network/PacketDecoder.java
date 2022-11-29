@@ -43,23 +43,12 @@ public class PacketDecoder extends MessageToMessageDecoder<DatagramPacket> {
         Packet out = new LoginResponsePacket(true, "Kusje");
         output.writeByte(0x00);
         out.encode(output);
-//        output.writeBytes("Kus".getBytes(StandardCharsets.UTF_8));
         ctx.writeAndFlush(new DatagramPacket(output, dg.sender()));
-//        System.out.println("Written");
+        System.out.println("Written");
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         cause.printStackTrace();
     }
-
-    //
-//    @Override
-//    protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf, List<Object> list) throws Exception {
-//        System.out.println("DECODER!");
-//        System.out.println("DEC byte" + byteBuf.readByte());
-//        byte item = byteBuf.readByte();
-//
-//        list.add(item);
-//    }
 }

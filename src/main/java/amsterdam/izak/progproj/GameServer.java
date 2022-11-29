@@ -1,8 +1,8 @@
 package amsterdam.izak.progproj;
 
 import amsterdam.izak.progproj.network.ChannelInitializer;
-import amsterdam.izak.progproj.network.GameState;
 import amsterdam.izak.progproj.network.packets.PacketManager;
+import amsterdam.izak.progproj.players.PlayerManager;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -12,13 +12,13 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import lombok.Getter;
 
-import java.net.InetSocketAddress;
-
 public class GameServer {
     @Getter
     private static GameServer instance;
     @Getter
     private final PacketManager packetManager;
+    @Getter
+    private final PlayerManager playerManager;
     @Getter
     private Channel channel;
     private EventLoopGroup workerGroup;
@@ -26,6 +26,7 @@ public class GameServer {
     public GameServer() {
         GameServer.instance = this;
         this.packetManager = new PacketManager();
+        this.playerManager = new PlayerManager();
     }
 
     public ChannelFuture start() {
