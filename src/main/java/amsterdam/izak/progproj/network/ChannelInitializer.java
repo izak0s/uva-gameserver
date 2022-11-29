@@ -9,6 +9,6 @@ public class ChannelInitializer extends io.netty.channel.ChannelInitializer<Data
         System.out.println("Initializing pipeline");
         ch.pipeline()
                 .addLast("decoder", new PacketDecoder())
-                .addLast("handler", new PacketHandler());
+                .addLast("handler", new InboundPacketChannelHandler());
     }
 }

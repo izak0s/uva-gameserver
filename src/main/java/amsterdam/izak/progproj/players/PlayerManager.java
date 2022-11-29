@@ -18,7 +18,7 @@ public class PlayerManager {
     }
 
     public boolean isUsernameAvailable(String username) {
-        return usernameIdMap.containsKey(username);
+        return !usernameIdMap.containsKey(username);
     }
 
     public Player registerPlayer(String username, InetSocketAddress address) {

@@ -29,6 +29,9 @@ public class PacketDecoder extends MessageToMessageDecoder<DatagramPacket> {
         Packet packet = GameServer.getInstance().getPacketManager()
                 .getPacket(GameState.HANDSHAKE, packet_id);
 
+        if (packet == null)
+            throw new Exception("Unknown packet with id " + packet_id);
+
         // Decode packet
         packet.decode(buf);
 
@@ -43,8 +46,6 @@ public class PacketDecoder extends MessageToMessageDecoder<DatagramPacket> {
         System.out.println("Received packet" + packet.getClass().getName());
         list.add(wrapper);
 
-        // Release packet
-        dg.release();
 
 //        ByteBuf output = Unpooled.buffer();
 //        Packet out = new LoginResponsePacket(true, "Kusje");

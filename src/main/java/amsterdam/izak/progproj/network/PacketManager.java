@@ -1,26 +1,32 @@
-package amsterdam.izak.progproj.network.packets;
+package amsterdam.izak.progproj.network;
 
-import amsterdam.izak.progproj.network.GameState;
+import amsterdam.izak.progproj.GameServer;
+import amsterdam.izak.progproj.handlers.HandshakeHandler;
+import amsterdam.izak.progproj.network.packets.IncomingPacketWrapper;
+import amsterdam.izak.progproj.network.packets.Packet;
 import amsterdam.izak.progproj.network.packets.handshake.LoginRequestPacket;
 import amsterdam.izak.progproj.network.packets.handshake.LoginResponsePacket;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.socket.DatagramPacket;
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 
-import java.util.Collections;
+import java.net.InetSocketAddress;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Set;
 
 public class PacketManager {
     private Map<GameState, BidiMap<Byte, Class<? extends Packet>>> incoming_packets = new HashMap<>();
     private Map<GameState, BidiMap<Byte, Class<? extends Packet>>> outgoing_packets = new HashMap<>();
+    private Map<Class<? extends Packet>, Set<PacketHandler<? extends Packet>>> handlers;
 
     public PacketManager() {
-        this.registerIn(GameState.HANDSHAKE, LoginRequestPacket.class);
+        this.handlers = new HashMap<>();
 
+        this.registerIn(GameState.HANDSHAKE, LoginRequestPacket.class);
         this.registerOut(GameState.HANDSHAKE, LoginResponsePacket.class);
     }
 
@@ -30,7 +36,7 @@ public class PacketManager {
 
         int size = this.incoming_packets.get(state).size();
 
-        this.incoming_packets.get(state).put((byte)size, packet);
+        this.incoming_packets.get(state).put((byte) size, packet);
 
         return this;
     }
@@ -41,7 +47,7 @@ public class PacketManager {
 
         int size = this.outgoing_packets.get(state).size();
 
-        this.outgoing_packets.get(state).put((byte)size, packet);
+        this.outgoing_packets.get(state).put((byte) size, packet);
 
         return this;
     }
@@ -58,8 +64,8 @@ public class PacketManager {
     public byte findOutgoingPacketId(GameState state, Packet packet) throws Exception {
         BidiMap<Byte, Class<? extends Packet>> packets = outgoing_packets.get(state);
 
-        if (packets == null || packets.containsValue(packet.getClass())){
-            throw new Exception("Unknown packet with id" + packets);
+        if (packets == null || !packets.containsValue(packet.getClass())) {
+            throw new Exception("Unknown packet with id" + packet);
         }
 
         return packets.getKey(packet.getClass());
@@ -75,5 +81,31 @@ public class PacketManager {
         packet.encode(buf);
 
         return buf;
+    }
+
+    public <T extends Packet> void registerListener(Class<T> claz, PacketHandler<T> listener) {
+        if (!this.handlers.containsKey(claz))
+            this.handlers.put(claz, new HashSet<>());
+
+        this.handlers.get(claz).add(listener);
+    }
+
+    public void handlePacket(IncomingPacketWrapper packet) {
+        if (!this.handlers.containsKey(packet.getPacket().getClass())) {
+            return;
+        }
+
+        this.handlers.get(packet.getPacket().getClass()).forEach(handler -> {
+            try {
+                handler.handle(packet);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public void sendRawPacket(InetSocketAddress address, GameState state, Packet packet) throws Exception {
+        ByteBuf buf = encodePacket(state, packet);
+        GameServer.getInstance().getChannel().writeAndFlush(new DatagramPacket(buf, address));
     }
 }

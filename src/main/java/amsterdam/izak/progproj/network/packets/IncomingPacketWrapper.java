@@ -9,10 +9,10 @@ import java.net.InetSocketAddress;
 
 @Getter
 @AllArgsConstructor
-public class IncomingPacketWrapper {
+public class IncomingPacketWrapper<T extends Packet> {
     private Player player;
     private InetSocketAddress address;
-    private Packet packet;
+    private T packet;
 
     public GameState getState(){
         return this.isAuthenticated() ? GameState.GAME : GameState.HANDSHAKE;

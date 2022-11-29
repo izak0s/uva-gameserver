@@ -1,7 +1,8 @@
 package amsterdam.izak.progproj;
 
+import amsterdam.izak.progproj.handlers.HandshakeHandler;
 import amsterdam.izak.progproj.network.ChannelInitializer;
-import amsterdam.izak.progproj.network.packets.PacketManager;
+import amsterdam.izak.progproj.network.PacketManager;
 import amsterdam.izak.progproj.players.PlayerManager;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -27,6 +28,9 @@ public class GameServer {
         GameServer.instance = this;
         this.packetManager = new PacketManager();
         this.playerManager = new PlayerManager();
+
+        // Register packet handlers
+        new HandshakeHandler();
     }
 
     public ChannelFuture start() {
