@@ -38,7 +38,7 @@ public class PlayerManager {
 
     public Player getPlayer(InetSocketAddress address) throws Exception {
         if (!connectionIdMap.containsKey(address))
-            throw new Exception("No player found with address " + address);
+            return null;
 
         int id =  connectionIdMap.get(address);
 

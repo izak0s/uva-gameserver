@@ -2,9 +2,11 @@ package amsterdam.izak.progproj.network;
 
 
 import amsterdam.izak.progproj.GameServer;
+import amsterdam.izak.progproj.network.packets.IncomingPacketWrapper;
 import amsterdam.izak.progproj.network.packets.Packet;
 import amsterdam.izak.progproj.network.packets.handshake.LoginResponsePacket;
 import amsterdam.izak.progproj.network.types.Vars;
+import amsterdam.izak.progproj.players.Player;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -27,8 +29,6 @@ public class PacketDecoder extends MessageToMessageDecoder<DatagramPacket> {
         Packet packet = GameServer.getInstance().getPacketManager()
                 .getPacket(GameState.HANDSHAKE, packet_id);
 
-        System.out.println(buf.readableBytes() + " READABLE");
-
         // Decode packet
         packet.decode(buf);
 
@@ -36,15 +36,22 @@ public class PacketDecoder extends MessageToMessageDecoder<DatagramPacket> {
             throw new Exception("Malformed packet");
         }
 
-        System.out.println("Received packet" + packet.getClass().getName());
-        list.add(packet);
+        Player player = GameServer.getInstance().getPlayerManager().getPlayer(dg.sender());
 
-        ByteBuf output = Unpooled.buffer();
-        Packet out = new LoginResponsePacket(true, "Kusje");
-        output.writeByte(0x00);
-        out.encode(output);
-        ctx.writeAndFlush(new DatagramPacket(output, dg.sender()));
-        System.out.println("Written");
+        IncomingPacketWrapper wrapper = new IncomingPacketWrapper(player, dg.sender(), packet);
+
+        System.out.println("Received packet" + packet.getClass().getName());
+        list.add(wrapper);
+
+        // Release packet
+        dg.release();
+
+//        ByteBuf output = Unpooled.buffer();
+//        Packet out = new LoginResponsePacket(true, "Kusje");
+//        output.writeByte(0x00);
+//        out.encode(output);
+//        ctx.writeAndFlush(new DatagramPacket(output, dg.sender()));
+//        System.out.println("Written");
     }
 
     @Override

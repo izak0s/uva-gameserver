@@ -3,6 +3,8 @@ package amsterdam.izak.progproj.network.packets;
 import amsterdam.izak.progproj.network.GameState;
 import amsterdam.izak.progproj.network.packets.handshake.LoginRequestPacket;
 import amsterdam.izak.progproj.network.packets.handshake.LoginResponsePacket;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 
@@ -24,7 +26,6 @@ public class PacketManager {
 
     private PacketManager registerIn(GameState state, Class<? extends Packet> packet) {
         if (!incoming_packets.containsKey(state))
-
             incoming_packets.put(state, new DualHashBidiMap<>());
 
         int size = this.incoming_packets.get(state).size();
@@ -62,5 +63,17 @@ public class PacketManager {
         }
 
         return packets.getKey(packet.getClass());
+    }
+
+    public ByteBuf encodePacket(GameState state, Packet packet) throws Exception {
+        ByteBuf buf = Unpooled.buffer();
+
+        byte packetId = findOutgoingPacketId(state, packet);
+        buf.writeByte(packetId);
+
+        // Encode packet
+        packet.encode(buf);
+
+        return buf;
     }
 }
