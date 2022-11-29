@@ -4,6 +4,9 @@ import amsterdam.izak.progproj.handlers.GamePacketHandler;
 import amsterdam.izak.progproj.handlers.HandshakeHandler;
 import amsterdam.izak.progproj.network.ChannelInitializer;
 import amsterdam.izak.progproj.network.PacketManager;
+import amsterdam.izak.progproj.network.packets.Packet;
+import amsterdam.izak.progproj.network.packets.game.MovePlayerPacket;
+import amsterdam.izak.progproj.players.Player;
 import amsterdam.izak.progproj.players.PlayerManager;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -30,6 +33,7 @@ public class GameServer {
     private Channel channel;
     private EventLoopGroup workerGroup;
     private final int ticks = 20;
+
     public GameServer() {
         GameServer.instance = this;
         this.packetManager = new PacketManager();
@@ -69,12 +73,32 @@ public class GameServer {
         workerGroup.shutdownGracefully();
     }
 
-    public void updateGame(){
-        getPlayerManager().getPlayers().forEach(player -> {
-            if (player.getPosition() != player.getLastSentPosition()){
-                System.out.println("Updated position");
-                player.setLastSentPosition(player.getPosition());
+    public void sendToAll(Packet packet) throws Exception {
+        sendToAll(packet, null);
+    }
+
+    public void sendToAll(Packet packet, Player except) throws Exception {
+        for (Player player : getPlayerManager().getPlayers()) {
+            if (player == except)
+                continue;
+
+            player.sendPacket(packet);
+        }
+    }
+
+    public void updateGame() {
+        for (Player player : getPlayerManager().getPlayers()) {
+            try {
+                if (player.getPosition() != player.getLastSentPosition()) {
+                    System.out.println("Updated position");
+
+                    sendToAll(new MovePlayerPacket(player.getId(), player.getPosition()));
+
+                    player.setLastSentPosition(player.getPosition());
+                }
+            } catch (Exception e){
+                System.out.println("Failed to update player " + player.getUsername());
             }
-        });
+        }
     }
 }

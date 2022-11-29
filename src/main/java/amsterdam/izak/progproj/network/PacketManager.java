@@ -4,8 +4,7 @@ import amsterdam.izak.progproj.GameServer;
 import amsterdam.izak.progproj.handlers.HandshakeHandler;
 import amsterdam.izak.progproj.network.packets.IncomingPacketWrapper;
 import amsterdam.izak.progproj.network.packets.Packet;
-import amsterdam.izak.progproj.network.packets.game.ClientMovePacket;
-import amsterdam.izak.progproj.network.packets.game.KeepAlivePacket;
+import amsterdam.izak.progproj.network.packets.game.*;
 import amsterdam.izak.progproj.network.packets.handshake.LoginRequestPacket;
 import amsterdam.izak.progproj.network.packets.handshake.LoginResponsePacket;
 import io.netty.buffer.ByteBuf;
@@ -35,7 +34,10 @@ public class PacketManager {
         // Game
         this.registerIn(GameState.GAME, KeepAlivePacket.class)
                 .registerIn(GameState.GAME, ClientMovePacket.class);
-        this.registerOut(GameState.GAME, KeepAlivePacket.class);
+        this.registerOut(GameState.GAME, KeepAlivePacket.class)
+                .registerOut(GameState.GAME, AddPlayerPacket.class)
+                .registerOut(GameState.GAME, RemovePlayerPacket.class)
+                .registerOut(GameState.GAME, MovePlayerPacket.class);
     }
 
     private PacketManager registerIn(GameState state, Class<? extends Packet> packet) {
