@@ -2,13 +2,13 @@ package amsterdam.izak.progproj.handlers;
 
 import amsterdam.izak.progproj.GameServer;
 import amsterdam.izak.progproj.network.GameState;
-import amsterdam.izak.progproj.network.PacketHandler;
 import amsterdam.izak.progproj.network.PacketManager;
-import amsterdam.izak.progproj.network.packets.IncomingPacketWrapper;
+import amsterdam.izak.progproj.network.packets.game.AddPlayerPacket;
 import amsterdam.izak.progproj.network.packets.handshake.LoginRequestPacket;
 import amsterdam.izak.progproj.network.packets.handshake.LoginResponsePacket;
 import amsterdam.izak.progproj.players.Player;
 import amsterdam.izak.progproj.players.PlayerManager;
+import amsterdam.izak.progproj.players.Position;
 
 public class HandshakeHandler {
     public HandshakeHandler() {
@@ -36,6 +36,9 @@ public class HandshakeHandler {
             System.out.println("Player " + username + " joined the server!");
             player.sendPacket(new LoginResponsePacket(true, ""));
             player.setState(GameState.GAME);
+
+            AddPlayerPacket addPlayer = new AddPlayerPacket(player.getId(), player.getUsername(), new Position(0, 0, 0));
+            GameServer.getInstance().sendToAll(addPlayer);
         });
     }
 }
