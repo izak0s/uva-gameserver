@@ -10,4 +10,5 @@ public class Vars {
     public static final BoolType BOOLEAN = new BoolType();
 
     public static final PositionType POSITION = new PositionType();
+    public static final PlatformType PLATFORM = new PlatformType();
 }
