@@ -42,7 +42,7 @@ public class PlayerManager {
         if (!connectionIdMap.containsKey(address))
             return null;
 
-        int id =  connectionIdMap.get(address);
+        int id = connectionIdMap.get(address);
 
         return playerMap.get(id);
     }

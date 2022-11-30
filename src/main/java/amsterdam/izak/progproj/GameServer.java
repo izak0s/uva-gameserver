@@ -90,8 +90,6 @@ public class GameServer {
         for (Player player : getPlayerManager().getPlayers()) {
             try {
                 if (player.getPosition() != player.getLastSentPosition()) {
-                    System.out.println("Updated position");
-
                     sendToAll(new MovePlayerPacket(player.getId(), player.getPosition()));
 
                     player.setLastSentPosition(player.getPosition());

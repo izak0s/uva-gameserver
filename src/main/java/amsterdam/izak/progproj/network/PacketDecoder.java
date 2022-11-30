@@ -18,7 +18,6 @@ import java.util.List;
 public class PacketDecoder extends MessageToMessageDecoder<DatagramPacket> {
     @Override
     protected void decode(ChannelHandlerContext ctx, DatagramPacket dg, List<Object> list) throws Exception {
-        System.out.println(dg.sender());
         ByteBuf buf = dg.content();
 
         // Early return empty packet
@@ -44,16 +43,7 @@ public class PacketDecoder extends MessageToMessageDecoder<DatagramPacket> {
 
         IncomingPacketWrapper wrapper = new IncomingPacketWrapper(player, dg.sender(), packet);
 
-        System.out.println("Received packet" + packet.getClass().getName());
         list.add(wrapper);
-
-
-//        ByteBuf output = Unpooled.buffer();
-//        Packet out = new LoginResponsePacket(true, "Kusje");
-//        output.writeByte(0x00);
-//        out.encode(output);
-//        ctx.writeAndFlush(new DatagramPacket(output, dg.sender()));
-//        System.out.println("Written");
     }
 
     @Override
