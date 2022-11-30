@@ -22,9 +22,6 @@ public class Player {
     @Setter
     @Getter
     private Position position;
-    @Getter
-    @Setter
-    private Position lastSentPosition;
 
     public Player(int id, InetSocketAddress address, String username) {
         this.id = id;

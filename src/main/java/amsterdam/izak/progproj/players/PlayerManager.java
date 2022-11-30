@@ -1,5 +1,8 @@
 package amsterdam.izak.progproj.players;
 
+import amsterdam.izak.progproj.GameServer;
+import amsterdam.izak.progproj.network.packets.game.RemovePlayerPacket;
+
 import java.net.InetSocketAddress;
 import java.util.Collection;
 import java.util.List;
@@ -49,5 +52,14 @@ public class PlayerManager {
 
     public Collection<Player> getPlayers(){
         return this.playerMap.values();
+    }
+
+    public void removePlayer(Player player) throws Exception {
+        RemovePlayerPacket removePlayerPacket = new RemovePlayerPacket(player.getId());
+        GameServer.getInstance().sendToAll(removePlayerPacket, player);
+
+        playerMap.remove(player.getId());
+        usernameIdMap.remove(player.getUsername());
+        connectionIdMap.remove(player.getAddress());
     }
 }

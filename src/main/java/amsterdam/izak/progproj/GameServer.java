@@ -1,6 +1,7 @@
 package amsterdam.izak.progproj;
 
 import amsterdam.izak.progproj.handlers.GamePacketHandler;
+import amsterdam.izak.progproj.handlers.GamePlayHandler;
 import amsterdam.izak.progproj.handlers.HandshakeHandler;
 import amsterdam.izak.progproj.network.ChannelInitializer;
 import amsterdam.izak.progproj.network.PacketManager;
@@ -20,6 +21,7 @@ import lombok.Getter;
 import java.util.Timer;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class GameServer {
@@ -33,6 +35,7 @@ public class GameServer {
     private Channel channel;
     private EventLoopGroup workerGroup;
     private final int ticks = 20;
+    private ScheduledFuture gameLoop;
 
     public GameServer() {
         GameServer.instance = this;
@@ -43,10 +46,11 @@ public class GameServer {
         new HandshakeHandler();
         new GamePacketHandler();
 
-        Timer t = new Timer();
         ScheduledExecutorService executor = Executors
                 .newSingleThreadScheduledExecutor();
-        executor.scheduleAtFixedRate(this::updateGame,
+
+        GamePlayHandler gamePlayHandler = new GamePlayHandler();
+        gameLoop = executor.scheduleAtFixedRate(gamePlayHandler::tick,
                 0, 1000 / ticks, TimeUnit.MILLISECONDS);
     }
 
@@ -67,6 +71,7 @@ public class GameServer {
     }
 
     public void stop() {
+        gameLoop.cancel(true);
         if (channel != null) {
             channel.close();
         }
@@ -89,11 +94,7 @@ public class GameServer {
     public void updateGame() {
         for (Player player : getPlayerManager().getPlayers()) {
             try {
-                if (player.getPosition() != player.getLastSentPosition()) {
-                    sendToAll(new MovePlayerPacket(player.getId(), player.getPosition()));
 
-                    player.setLastSentPosition(player.getPosition());
-                }
             } catch (Exception e){
                 System.out.println("Failed to update player " + player.getUsername());
             }
