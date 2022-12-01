@@ -38,7 +38,8 @@ public class PacketManager {
                 .registerOut(GameState.GAME, AddPlayerPacket.class)
                 .registerOut(GameState.GAME, RemovePlayerPacket.class)
                 .registerOut(GameState.GAME, MovePlayerPacket.class)
-                .registerOut(GameState.GAME, UpdateMapPacket.class);
+                .registerOut(GameState.GAME, UpdateMapPacket.class)
+                .registerOut(GameState.GAME, UpdateUIPacket.class);
     }
 
     private PacketManager registerIn(GameState state, Class<? extends Packet> packet) {
