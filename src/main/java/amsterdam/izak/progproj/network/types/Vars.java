@@ -1,7 +1,6 @@
 package amsterdam.izak.progproj.network.types;
 
 import amsterdam.izak.progproj.network.types.impl.*;
-import amsterdam.izak.progproj.players.Position;
 
 public class Vars {
     public static final StringType STRING = new StringType();
@@ -11,4 +10,5 @@ public class Vars {
 
     public static final PositionType POSITION = new PositionType();
     public static final PlatformType PLATFORM = new PlatformType();
+    public static final ColorType COLOR = new ColorType();
 }

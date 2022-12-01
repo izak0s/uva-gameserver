@@ -10,9 +10,7 @@ public class PlatformType implements Type<Platform> {
     @Override
     public void encode(ByteBuf buf, Platform item) {
         Vars.BOOLEAN.encode(buf, item.isActive());
-        Vars.INT.encode(buf, item.getColor().getRed());
-        Vars.INT.encode(buf, item.getColor().getGreen());
-        Vars.INT.encode(buf, item.getColor().getBlue());
+        Vars.COLOR.encode(buf, item.getColor());
     }
 
     @Override
