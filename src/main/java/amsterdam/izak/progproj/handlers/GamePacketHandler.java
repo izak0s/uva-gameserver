@@ -15,9 +15,10 @@ public class GamePacketHandler {
         packetManager.registerListener(ClientMovePacket.class, packet -> {
             // Update player position
             packet.getPlayer().setPosition(packet.getPacket().getPosition());
+            packet.getPacket().getPosition().setX(packet.getPacket().getPosition().getX() + 4);
             GameServer.getInstance().sendToAll(
-                    new MovePlayerPacket(packet.getPlayer().getId(), packet.getPacket().getPosition()),
-                    packet.getPlayer()
+                    new MovePlayerPacket(packet.getPlayer().getId(), packet.getPacket().getPosition())
+//                    packet.getPlayer()
             );
         });
     }

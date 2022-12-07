@@ -36,6 +36,8 @@ public class GameServer {
     private EventLoopGroup workerGroup;
     private final int ticks = 20;
     private ScheduledFuture gameLoop;
+    @Getter
+    private GamePlayHandler gamePlayHandler;
 
     public GameServer() {
         GameServer.instance = this;
@@ -49,7 +51,7 @@ public class GameServer {
         ScheduledExecutorService executor = Executors
                 .newSingleThreadScheduledExecutor();
 
-        GamePlayHandler gamePlayHandler = new GamePlayHandler();
+        this.gamePlayHandler = new GamePlayHandler();
         gameLoop = executor.scheduleAtFixedRate(gamePlayHandler::tick,
                 0, 1000 / ticks, TimeUnit.MILLISECONDS);
     }

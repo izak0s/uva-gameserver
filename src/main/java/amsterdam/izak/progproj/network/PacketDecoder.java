@@ -38,7 +38,7 @@ public class PacketDecoder extends MessageToMessageDecoder<DatagramPacket> {
         packet.decode(buf);
 
         if (buf.readableBytes() != 0){
-            throw new Exception("Malformed packet");
+            throw new Exception("Malformed packet: " + packet_id);
         }
 
         IncomingPacketWrapper wrapper = new IncomingPacketWrapper(player, dg.sender(), packet);
