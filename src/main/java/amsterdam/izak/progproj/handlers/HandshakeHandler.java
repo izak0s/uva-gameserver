@@ -45,7 +45,7 @@ public class HandshakeHandler {
             GameServer.getInstance().getGamePlayHandler().updateState(player);
 
             AddPlayerPacket addPlayer = new AddPlayerPacket(player.getId(), player.getUsername(), new Position(0, 0, 0));
-            GameServer.getInstance().sendToAll(addPlayer);
+            GameServer.getInstance().sendToAll(addPlayer, player);
         });
     }
 }

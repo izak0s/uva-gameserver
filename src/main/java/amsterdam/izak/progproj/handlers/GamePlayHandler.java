@@ -28,6 +28,7 @@ public class GamePlayHandler {
     private Color currentColor;
     private final Color defaultColor = new Color(52, 73, 94);
     private Set<Player> alive = new CopyOnWriteArraySet<>();
+    private int roundNumber = 0;
 
     public GamePlayHandler() {
         this.platforms = new ArrayList<>();
@@ -73,12 +74,13 @@ public class GamePlayHandler {
             Collection<Player> players = game().getPlayerManager().getPlayers();
             if (state.equals(GamePlayState.IDLE) && !players.isEmpty()) {
                 state = GamePlayState.COUNTING_DOWN;
-                counter = 5;
+                counter = 10;
                 System.out.println("Start counting down");
             } else if ((state.equals(GamePlayState.COUNTING_DOWN)
                     || state.equals(GamePlayState.RUNNING)) && players.isEmpty()) {
                 state = GamePlayState.IDLE;
                 System.out.println("Changing game state to idle");
+                resetGame();
             }
 
             // Countdown
@@ -115,6 +117,7 @@ public class GamePlayHandler {
                             updateAllStates();
                         }
                         case WAITING_FOR_NEXT_ROUND -> {
+                            roundNumber++;
                             roundState = RoundState.COLOR_ANNOUNCED;
                             counter = 3;
                             Random rand = new Random();
@@ -209,7 +212,7 @@ public class GamePlayHandler {
                     player.sendPacket(new UpdateUIPacket(defaultColor, "Look around"));
                 }
                 case WAITING_FOR_NEXT_ROUND -> {
-                    player.sendPacket(new UpdateUIPacket(defaultColor, ""));
+                    player.sendPacket(new UpdateUIPacket(defaultColor, "Round " + roundNumber));
                 }
                 case COLOR_ANNOUNCED -> {
                     player.sendPacket(new UpdateUIPacket(currentColor, "Go to color"));
@@ -218,7 +221,7 @@ public class GamePlayHandler {
                     player.sendPacket(new UpdateUIPacket(currentColor, "Wait"));
                 }
                 case WINNER -> {
-                    player.sendPacket(new UpdateUIPacket(currentColor, alive.stream().findFirst().get().getUsername() +" won!"));
+                    player.sendPacket(new UpdateUIPacket(defaultColor, alive.stream().findFirst().get().getUsername() +" won! (" + roundNumber + ")"));
                 }
             }
         }
@@ -246,6 +249,7 @@ public class GamePlayHandler {
 
         state = GamePlayState.IDLE;
         roundState = RoundState.WAITING_TO_START;
+        roundNumber = 0;
     }
 
     public GameServer game() {
