@@ -14,15 +14,14 @@ public class GamePacketHandler {
         // 0x01 - Client move
         packetManager.registerListener(ClientMovePacket.class, packet -> {
             // Update player position
-            packet.getPacket().getPosition().setX(packet.getPacket().getPosition().getX() + 1);
             packet.getPlayer().setPosition(packet.getPacket().getPosition());
             GameServer.getInstance().sendToAll(
                     new MovePlayerPacket(
                             packet.getPlayer().getId(),
                             packet.getPacket().getPosition(),
                             packet.getPacket().getYaw()
-                    )
-//                    packet.getPlayer()
+                    ),
+                    packet.getPlayer()
             );
         });
     }

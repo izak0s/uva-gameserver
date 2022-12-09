@@ -190,7 +190,7 @@ public class GamePlayHandler {
                         player.getId(),
                         player.getUsername(),
                         new Position(0, 0, 0)
-                ));
+                ), player);
             }
 
             case RUNNING -> {
@@ -301,7 +301,7 @@ public class GamePlayHandler {
         alive.clear();
 
         for (Player p : game().getPlayerManager().getPlayers())
-            game().sendToAll(new AddPlayerPacket(p.getId(), p.getUsername(), new Position(0, 0, 0)));
+            game().sendToAll(new AddPlayerPacket(p.getId(), p.getUsername(), new Position(0, 0, 0)), p);
     }
 
     public GameServer game() {
