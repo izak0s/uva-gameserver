@@ -57,6 +57,7 @@ public class PlayerManager {
     public void removePlayer(Player player) throws Exception {
         RemovePlayerPacket removePlayerPacket = new RemovePlayerPacket(player.getId());
         GameServer.getInstance().sendToAll(removePlayerPacket);
+        GameServer.getInstance().getGamePlayHandler().playerDie(player);
 
         playerMap.remove(player.getId());
         usernameIdMap.remove(player.getUsername());

@@ -3,6 +3,7 @@ package amsterdam.izak.progproj.handlers;
 import amsterdam.izak.progproj.GameServer;
 import amsterdam.izak.progproj.data.Platform;
 import amsterdam.izak.progproj.network.packets.game.MovePlayerPacket;
+import amsterdam.izak.progproj.network.packets.game.SpectatePacket;
 import amsterdam.izak.progproj.network.packets.game.UpdateMapPacket;
 import amsterdam.izak.progproj.network.packets.game.UpdateUIPacket;
 import amsterdam.izak.progproj.players.Player;
@@ -195,6 +196,7 @@ public class GamePlayHandler {
                     new UpdateUIPacket(new Color(52, 73, 94), "Waiting")
             );
 
+            alive.clear();
             player.sendPacket(new UpdateMapPacket(size, defaultPlatform));
 
             return;
@@ -232,6 +234,7 @@ public class GamePlayHandler {
             return;
 
         System.out.println("Player " + player.getUsername() + " died!");
+        player.sendPacket(new SpectatePacket(true));
 
         if (alive.size() == 1){
             System.out.println("Player " + player.getUsername() + " won!");
@@ -245,6 +248,7 @@ public class GamePlayHandler {
 
     public void resetGame() throws Exception {
         game().sendToAll(new UpdateMapPacket(size, defaultPlatform));
+        game().sendToAll(new SpectatePacket(false));
         resetPlatforms();
 
         state = GamePlayState.IDLE;
