@@ -11,4 +11,5 @@ public class Vars {
     public static final PositionType POSITION = new PositionType();
     public static final PlatformType PLATFORM = new PlatformType();
     public static final ColorType COLOR = new ColorType();
+    public static final FloatType FLOAT = new FloatType();
 }

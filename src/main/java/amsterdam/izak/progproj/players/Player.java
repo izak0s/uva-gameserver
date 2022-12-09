@@ -28,6 +28,7 @@ public class Player {
         this.address = address;
         this.username = username;
         this.currentState = GameState.HANDSHAKE;
+        this.position = new Position(0,0,0);
         this.updateLastPacket();
     }
 

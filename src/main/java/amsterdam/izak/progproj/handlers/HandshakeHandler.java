@@ -37,15 +37,11 @@ public class HandshakeHandler {
             player.sendPacket(new LoginResponsePacket(true, ""));
             player.setState(GameState.GAME);
 
-            for (Player onlinePlayer : playerManager.getPlayers())
-                if (player != onlinePlayer)
-                    player.sendPacket(new AddPlayerPacket(onlinePlayer.getId(), onlinePlayer.getUsername(), onlinePlayer.getPosition()));
-
             // Update Game state
             GameServer.getInstance().getGamePlayHandler().updateState(player);
 
-            AddPlayerPacket addPlayer = new AddPlayerPacket(player.getId(), player.getUsername(), new Position(0, 0, 0));
-            GameServer.getInstance().sendToAll(addPlayer, player);
+
+            GameServer.getInstance().getGamePlayHandler().playerJoins(player);
         });
     }
 }

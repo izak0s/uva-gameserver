@@ -2,10 +2,7 @@ package amsterdam.izak.progproj.handlers;
 
 import amsterdam.izak.progproj.GameServer;
 import amsterdam.izak.progproj.data.Platform;
-import amsterdam.izak.progproj.network.packets.game.MovePlayerPacket;
-import amsterdam.izak.progproj.network.packets.game.SpectatePacket;
-import amsterdam.izak.progproj.network.packets.game.UpdateMapPacket;
-import amsterdam.izak.progproj.network.packets.game.UpdateUIPacket;
+import amsterdam.izak.progproj.network.packets.game.*;
 import amsterdam.izak.progproj.players.Player;
 import amsterdam.izak.progproj.players.Position;
 
@@ -29,7 +26,7 @@ public class GamePlayHandler {
     private Color currentColor;
     private final Color defaultColor = new Color(52, 73, 94);
     private Set<Player> alive = new CopyOnWriteArraySet<>();
-    private int roundNumber = 0;
+    private int roundNumber = 1;
 
     public GamePlayHandler() {
         this.platforms = new ArrayList<>();
@@ -91,7 +88,7 @@ public class GamePlayHandler {
 
                     randomizeMap();
                     game().sendToAll(new UpdateMapPacket(size, platforms));
-                    // TODO start game
+
                     System.out.println("Start game");
 
                     alive.addAll(game().getPlayerManager().getPlayers());
@@ -176,12 +173,48 @@ public class GamePlayHandler {
         }
     }
 
+    public void playerJoins(Player player) throws Exception {
+        switch (state) {
+            case IDLE, COUNTING_DOWN -> {
+                // Add all players
+                for (Player onlinePlayer : game().getPlayerManager().getPlayers())
+                    if (player != onlinePlayer)
+                        player.sendPacket(new AddPlayerPacket(
+                                onlinePlayer.getId(),
+                                onlinePlayer.getUsername(),
+                                onlinePlayer.getPosition())
+                        );
+
+                // Let other players know about new player
+                GameServer.getInstance().sendToAll(new AddPlayerPacket(
+                        player.getId(),
+                        player.getUsername(),
+                        new Position(0, 0, 0)
+                ));
+            }
+
+            case RUNNING -> {
+                // Add alive players
+                for (Player onlinePlayer : alive)
+                    player.sendPacket(new AddPlayerPacket(
+                            onlinePlayer.getId(),
+                            onlinePlayer.getUsername(),
+                            onlinePlayer.getPosition())
+                    );
+
+                // Spectate
+                player.sendPacket(new SpectatePacket(true));
+            }
+        }
+
+    }
+
     public void updatePlatforms() throws Exception {
         platforms.stream().filter(platform -> !platform.getColor().equals(currentColor)).forEach(platform -> platform.setActive(false));
         game().sendToAll(new UpdateMapPacket(size, platforms));
     }
 
-    public void resetPlatforms(){
+    public void resetPlatforms() {
         platforms.forEach(platform -> platform.setActive(true));
     }
 
@@ -202,15 +235,20 @@ public class GamePlayHandler {
             return;
         } else if (state.equals(GamePlayState.COUNTING_DOWN)) {
             int i = Math.round(counter * 2);
-            Color c = i % 2 == 0 ? new Color(52, 73, 94) : new Color(52, 152, 219);
+            player.sendPacket(
+                    new UpdateUIPacket(new Color(52, 73, 94), "Waiting")
+            );
+
 
             DecimalFormat df = new DecimalFormat();
             df.setMaximumFractionDigits(2);
             df.setMinimumFractionDigits(2);
-            player.sendPacket(new UpdateUIPacket(c, df.format(counter)));
+
+            player.sendPacket(new UpdateTitlePacket("Waiting for players..", "Starting in: " + df.format(counter)));
         } else if (state.equals(GamePlayState.RUNNING)) {
             switch (roundState) {
                 case WAITING_TO_START -> {
+                    player.sendPacket(new UpdateTitlePacket("", ""));
                     player.sendPacket(new UpdateUIPacket(defaultColor, "Look around"));
                 }
                 case WAITING_FOR_NEXT_ROUND -> {
@@ -223,7 +261,12 @@ public class GamePlayHandler {
                     player.sendPacket(new UpdateUIPacket(currentColor, "Wait"));
                 }
                 case WINNER -> {
-                    player.sendPacket(new UpdateUIPacket(defaultColor, alive.stream().findFirst().get().getUsername() +" won! (" + roundNumber + ")"));
+                    Optional<Player> username = alive.stream().findFirst();
+                    if (username.isEmpty())
+                        return;
+                    player.sendPacket(new UpdateTitlePacket(
+                            "Player " + username.get().getUsername() + " won!",
+                            "survived for " + roundNumber + " rounds!"));
                 }
             }
         }
@@ -236,7 +279,7 @@ public class GamePlayHandler {
         System.out.println("Player " + player.getUsername() + " died!");
         player.sendPacket(new SpectatePacket(true));
 
-        if (alive.size() == 1){
+        if (alive.size() == 1) {
             System.out.println("Player " + player.getUsername() + " won!");
             roundState = RoundState.WINNER;
             counter = 5f;
@@ -244,6 +287,7 @@ public class GamePlayHandler {
         }
 
         alive.remove(player);
+        game().sendToAll(new RemovePlayerPacket(player.getId()), player);
     }
 
     public void resetGame() throws Exception {
@@ -253,7 +297,11 @@ public class GamePlayHandler {
 
         state = GamePlayState.IDLE;
         roundState = RoundState.WAITING_TO_START;
-        roundNumber = 0;
+        roundNumber = 1;
+        alive.clear();
+
+        for (Player p : game().getPlayerManager().getPlayers())
+            game().sendToAll(new AddPlayerPacket(p.getId(), p.getUsername(), new Position(0, 0, 0)));
     }
 
     public GameServer game() {
