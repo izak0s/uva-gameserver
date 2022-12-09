@@ -18,10 +18,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PacketManager {
-    private Map<GameState, BidiMap<Byte, Class<? extends Packet>>> incoming_packets = new HashMap<>();
-    private Map<GameState, BidiMap<Byte, Class<? extends Packet>>> outgoing_packets = new HashMap<>();
+    private Map<GameState, BidiMap<Byte, Class<? extends Packet>>> incoming_packets = new ConcurrentHashMap<>();
+    private Map<GameState, BidiMap<Byte, Class<? extends Packet>>> outgoing_packets = new ConcurrentHashMap<>();
     private Map<Class<? extends Packet>, Set<PacketHandler<? extends Packet>>> handlers;
 
     public PacketManager() {
@@ -33,7 +34,8 @@ public class PacketManager {
 
         // Game
         this.registerIn(GameState.GAME, KeepAlivePacket.class)
-                .registerIn(GameState.GAME, ClientMovePacket.class);
+                .registerIn(GameState.GAME, ClientMovePacket.class)
+                .registerIn(GameState.GAME, QuitPacket.class);
         this.registerOut(GameState.GAME, KeepAlivePacket.class)
                 .registerOut(GameState.GAME, AddPlayerPacket.class)
                 .registerOut(GameState.GAME, RemovePlayerPacket.class)
@@ -70,7 +72,7 @@ public class PacketManager {
         Map<Byte, Class<? extends Packet>> packets = incoming_packets.get(state);
 
         if (!packets.containsKey(packetId))
-            throw new Exception("Unknown packet with id " + packetId);
+            return null;
 
         return packets.get(packetId).getDeclaredConstructor().newInstance();
     }

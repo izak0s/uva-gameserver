@@ -4,6 +4,7 @@ package amsterdam.izak.progproj.network;
 import amsterdam.izak.progproj.GameServer;
 import amsterdam.izak.progproj.network.packets.IncomingPacketWrapper;
 import amsterdam.izak.progproj.network.packets.Packet;
+import amsterdam.izak.progproj.network.packets.UnknownPacket;
 import amsterdam.izak.progproj.network.packets.handshake.LoginResponsePacket;
 import amsterdam.izak.progproj.network.types.Vars;
 import amsterdam.izak.progproj.players.Player;
@@ -31,13 +32,36 @@ public class PacketDecoder extends MessageToMessageDecoder<DatagramPacket> {
         Packet packet = GameServer.getInstance().getPacketManager()
                 .getPacket(state, packet_id);
 
-        if (packet == null)
-            throw new Exception("Unknown packet with id " + packet_id);
+        if (packet == null) {
+            if (player == null) {
+                list.add(new IncomingPacketWrapper<>(null, dg.sender(), new UnknownPacket()));
 
-        // Decode packet
-        packet.decode(buf);
+                return;
+            }
+
+            throw new Exception("Unknown packet with id " + packet_id);
+        }
+
+        try {
+            // Decode packet
+            packet.decode(buf);
+        } catch (IndexOutOfBoundsException e){
+            if (player == null) {
+                list.add(new IncomingPacketWrapper<>(null, dg.sender(), new UnknownPacket()));
+
+                return;
+            }
+
+            throw e;
+        }
 
         if (buf.readableBytes() != 0){
+            if (player == null) {
+                list.add(new IncomingPacketWrapper<>(null, dg.sender(), new UnknownPacket()));
+
+                return;
+            }
+
             throw new Exception("Malformed packet: " + packet_id);
         }
 

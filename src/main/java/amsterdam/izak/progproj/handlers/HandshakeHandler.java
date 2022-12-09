@@ -2,13 +2,19 @@ package amsterdam.izak.progproj.handlers;
 
 import amsterdam.izak.progproj.GameServer;
 import amsterdam.izak.progproj.network.GameState;
+import amsterdam.izak.progproj.network.PacketHandler;
 import amsterdam.izak.progproj.network.PacketManager;
+import amsterdam.izak.progproj.network.packets.IncomingPacketWrapper;
+import amsterdam.izak.progproj.network.packets.UnknownPacket;
 import amsterdam.izak.progproj.network.packets.game.AddPlayerPacket;
 import amsterdam.izak.progproj.network.packets.handshake.LoginRequestPacket;
 import amsterdam.izak.progproj.network.packets.handshake.LoginResponsePacket;
 import amsterdam.izak.progproj.players.Player;
 import amsterdam.izak.progproj.players.PlayerManager;
 import amsterdam.izak.progproj.players.Position;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.socket.DatagramPacket;
 
 public class HandshakeHandler {
     public HandshakeHandler() {
@@ -38,10 +44,18 @@ public class HandshakeHandler {
             player.setState(GameState.GAME);
 
             // Update Game state
-            GameServer.getInstance().getGamePlayHandler().updateState(player);
-
-
             GameServer.getInstance().getGamePlayHandler().playerJoins(player);
+            GameServer.getInstance().getGamePlayHandler().updateState(player);
+        });
+
+        // Handle unknown packets
+        packetManager.registerListener(UnknownPacket.class, packet -> {
+            ByteBuf buf = Unpooled.buffer();
+            buf.writeByte(100);
+
+            DatagramPacket out = new DatagramPacket(buf, packet.getAddress());
+            GameServer.getInstance().getChannel().writeAndFlush(out);
+
         });
     }
 }

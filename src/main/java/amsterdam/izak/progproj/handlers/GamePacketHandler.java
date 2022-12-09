@@ -4,6 +4,7 @@ import amsterdam.izak.progproj.GameServer;
 import amsterdam.izak.progproj.network.PacketManager;
 import amsterdam.izak.progproj.network.packets.game.ClientMovePacket;
 import amsterdam.izak.progproj.network.packets.game.MovePlayerPacket;
+import amsterdam.izak.progproj.network.packets.game.QuitPacket;
 import amsterdam.izak.progproj.players.PlayerManager;
 
 public class GamePacketHandler {
@@ -23,6 +24,11 @@ public class GamePacketHandler {
                     ),
                     packet.getPlayer()
             );
+        });
+
+        // 0x02 - Quit packet
+        packetManager.registerListener(QuitPacket.class, packet -> {
+            playerManager.removePlayer(packet.getPlayer());
         });
     }
 }

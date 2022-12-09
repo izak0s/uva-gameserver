@@ -8,15 +8,17 @@ import amsterdam.izak.progproj.players.Position;
 
 import java.awt.*;
 import java.text.DecimalFormat;
-import java.util.*;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 public class GamePlayHandler {
     private GamePlayState state;
     private RoundState roundState;
 
     private float counter;
-    private Set<Player> alive = new CopyOnWriteArraySet<>();
+    private Set<Player> alive = new HashSet<>();
     private int roundNumber = 0;
     private float timeVisible;
 
@@ -108,14 +110,16 @@ public class GamePlayHandler {
                     counter -= (1f / 20f);
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-
+        try {
             for (Player player : game().getPlayerManager().getPlayers()) {
                 try {
-                    // Remove idle players
+                    // Remove idle players (longer than 10 seconds)
                     if (now - player.getLastPacket() > 1000 * 10) {
                         game().getPlayerManager().removePlayer(player);
-                        System.out.println("Player " + player.getUsername() + " left");
                         continue;
                     }
 
@@ -138,6 +142,7 @@ public class GamePlayHandler {
             e.printStackTrace();
         }
     }
+
 
     public void playerJoins(Player player) throws Exception {
         switch (state) {
@@ -192,7 +197,6 @@ public class GamePlayHandler {
 
             return;
         } else if (state.equals(GamePlayState.COUNTING_DOWN)) {
-            int i = Math.round(counter * 2);
             player.sendPacket(
                     new UpdateUIPacket(new Color(52, 73, 94), "Waiting")
             );
@@ -201,6 +205,7 @@ public class GamePlayHandler {
             DecimalFormat df = new DecimalFormat();
             df.setMaximumFractionDigits(2);
             df.setMinimumFractionDigits(2);
+            if  (counter <= 0) counter = 0;
 
             player.sendPacket(new UpdateTitlePacket("Waiting for players..", "Starting in: " + df.format(counter)));
         } else if (state.equals(GamePlayState.RUNNING)) {
@@ -249,16 +254,18 @@ public class GamePlayHandler {
     }
 
     public void resetGame() throws Exception {
-        platforms.sendDefaultMap();
         game().sendToAll(new SpectatePacket(false));
         platforms.resetPlatforms();
+        platforms.sendDefaultMap();
 
+        // Reset parameters
         state = GamePlayState.IDLE;
         roundState = RoundState.SHOW_MAP;
         roundNumber = 0;
         timeVisible = 5f;
         alive.clear();
 
+        // Spawn all players back
         for (Player p : game().getPlayerManager().getPlayers())
             game().sendToAll(new AddPlayerPacket(p.getId(), p.getUsername(), p.getPosition()), p);
     }
