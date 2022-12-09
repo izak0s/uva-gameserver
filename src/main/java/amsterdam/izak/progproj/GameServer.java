@@ -7,6 +7,7 @@ import amsterdam.izak.progproj.network.ChannelInitializer;
 import amsterdam.izak.progproj.network.PacketManager;
 import amsterdam.izak.progproj.network.packets.Packet;
 import amsterdam.izak.progproj.network.packets.game.MovePlayerPacket;
+import amsterdam.izak.progproj.platforms.PlatformManager;
 import amsterdam.izak.progproj.players.Player;
 import amsterdam.izak.progproj.players.PlayerManager;
 import io.netty.bootstrap.Bootstrap;
@@ -32,6 +33,8 @@ public class GameServer {
     @Getter
     private final PlayerManager playerManager;
     @Getter
+    private final PlatformManager platformManager;
+    @Getter
     private Channel channel;
     private EventLoopGroup workerGroup;
     private final int ticks = 20;
@@ -43,6 +46,7 @@ public class GameServer {
         GameServer.instance = this;
         this.packetManager = new PacketManager();
         this.playerManager = new PlayerManager();
+        this.platformManager = new PlatformManager();
 
         // Register packet handlers
         new HandshakeHandler();
