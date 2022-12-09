@@ -158,7 +158,7 @@ public class GamePlayHandler {
                         switch (state) {
                             case COUNTING_DOWN, IDLE -> {
                                 Position pos = new Position(0, 5, 0);
-                                player.sendPacket(new MovePlayerPacket(-1, pos));
+                                player.sendPacket(new MovePlayerPacket(-1, pos, 0));
                             }
                             case RUNNING -> playerDie(player);
                         }

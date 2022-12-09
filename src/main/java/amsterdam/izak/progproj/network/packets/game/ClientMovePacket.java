@@ -19,14 +19,17 @@ import java.util.Vector;
 @ToString
 public class ClientMovePacket extends Packet {
     private Position position;
+    private float yaw;
 
     @Override
     public void encode(ByteBuf buf) throws Exception {
         Vars.POSITION.encode(buf, position);
+        Vars.FLOAT.encode(buf, yaw);
     }
 
     @Override
     public void decode(ByteBuf buf) throws Exception {
         position = Vars.POSITION.decode(buf);
+        yaw = Vars.FLOAT.decode(buf);
     }
 }

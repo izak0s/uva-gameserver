@@ -17,7 +17,11 @@ public class GamePacketHandler {
             packet.getPacket().getPosition().setX(packet.getPacket().getPosition().getX() + 1);
             packet.getPlayer().setPosition(packet.getPacket().getPosition());
             GameServer.getInstance().sendToAll(
-                    new MovePlayerPacket(packet.getPlayer().getId(), packet.getPacket().getPosition())
+                    new MovePlayerPacket(
+                            packet.getPlayer().getId(),
+                            packet.getPacket().getPosition(),
+                            packet.getPacket().getYaw()
+                    )
 //                    packet.getPlayer()
             );
         });
