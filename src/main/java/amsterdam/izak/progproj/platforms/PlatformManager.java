@@ -2,7 +2,7 @@ package amsterdam.izak.progproj.platforms;
 
 import amsterdam.izak.progproj.GameServer;
 import amsterdam.izak.progproj.data.Platform;
-import amsterdam.izak.progproj.network.packets.game.UpdateMapPacket;
+import amsterdam.izak.progproj.network.packets.game.env.UpdateMapPacket;
 import lombok.Getter;
 
 import java.awt.*;
@@ -13,10 +13,10 @@ import java.util.Random;
 
 public class PlatformManager {
     private final byte size = 5;
-    private List<Platform> platforms;
-    private List<Platform> defaultPlatform;
+    private final List<Platform> platforms;
+    private final List<Platform> defaultPlatform;
     private final List<Color> availableColors;
-    private List<Color> assignedColors;
+    private final List<Color> assignedColors;
     @Getter
     private Color currentColor;
     public final Color defaultColor = new Color(52, 73, 94);
@@ -29,6 +29,7 @@ public class PlatformManager {
         this.defaultPlatform = new ArrayList<>();
         this.availableColors = new ArrayList<>();
         this.assignedColors = new ArrayList<>();
+
         initColors();
 
         for (int i = 0; i < size * size; i++) {
@@ -68,7 +69,7 @@ public class PlatformManager {
         GameServer.getInstance().sendToAll(new UpdateMapPacket(size, platforms));
     }
 
-    public Color pickColor() throws Exception {
+    public Color pickColor() {
         currentColor = availableColors.get(random.nextInt(availableColors.size()));
 
         return currentColor;

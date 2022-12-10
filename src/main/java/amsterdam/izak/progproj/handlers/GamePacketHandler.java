@@ -2,9 +2,9 @@ package amsterdam.izak.progproj.handlers;
 
 import amsterdam.izak.progproj.GameServer;
 import amsterdam.izak.progproj.network.PacketManager;
-import amsterdam.izak.progproj.network.packets.game.ClientMovePacket;
-import amsterdam.izak.progproj.network.packets.game.MovePlayerPacket;
-import amsterdam.izak.progproj.network.packets.game.QuitPacket;
+import amsterdam.izak.progproj.network.packets.game.player.ClientMovePacket;
+import amsterdam.izak.progproj.network.packets.game.player.MovePlayerPacket;
+import amsterdam.izak.progproj.network.packets.game.player.QuitPacket;
 import amsterdam.izak.progproj.players.PlayerManager;
 
 public class GamePacketHandler {

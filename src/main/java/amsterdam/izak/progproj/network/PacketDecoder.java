@@ -2,14 +2,14 @@ package amsterdam.izak.progproj.network;
 
 
 import amsterdam.izak.progproj.GameServer;
+import amsterdam.izak.progproj.network.packets.GamePacket;
 import amsterdam.izak.progproj.network.packets.IncomingPacketWrapper;
 import amsterdam.izak.progproj.network.packets.Packet;
 import amsterdam.izak.progproj.network.packets.UnknownPacket;
-import amsterdam.izak.progproj.network.packets.handshake.LoginResponsePacket;
 import amsterdam.izak.progproj.network.types.Vars;
 import amsterdam.izak.progproj.players.Player;
+import amsterdam.izak.progproj.states.NetworkState;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.handler.codec.MessageToMessageDecoder;
@@ -26,7 +26,7 @@ public class PacketDecoder extends MessageToMessageDecoder<DatagramPacket> {
             return;
 
         Player player = GameServer.getInstance().getPlayerManager().getPlayer(dg.sender());
-        GameState state = player == null ? GameState.HANDSHAKE : GameState.GAME;
+        NetworkState state = player == null ? NetworkState.HANDSHAKE : NetworkState.GAME;
 
         byte packet_id = Vars.BYTE.decode(buf);
         Packet packet = GameServer.getInstance().getPacketManager()
@@ -44,7 +44,7 @@ public class PacketDecoder extends MessageToMessageDecoder<DatagramPacket> {
 
         try {
             // Decode packet
-            packet.decode(buf);
+            packet.decode(new GamePacket(buf));
         } catch (IndexOutOfBoundsException e){
             if (player == null) {
                 list.add(new IncomingPacketWrapper<>(null, dg.sender(), new UnknownPacket()));

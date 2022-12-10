@@ -1,7 +1,8 @@
-package amsterdam.izak.progproj.network.packets.game;
+package amsterdam.izak.progproj.network.packets.game.env;
 
 import amsterdam.izak.progproj.data.Platform;
 import amsterdam.izak.progproj.exceptions.NotImplementedException;
+import amsterdam.izak.progproj.network.packets.GamePacket;
 import amsterdam.izak.progproj.network.packets.Packet;
 import amsterdam.izak.progproj.network.types.Vars;
 import io.netty.buffer.ByteBuf;
@@ -22,16 +23,16 @@ public class UpdateMapPacket extends Packet
     private List<Platform> platforms;
 
     @Override
-    public void encode(ByteBuf buf) throws Exception {
+    public void encode(GamePacket buf) throws Exception {
         if (size * size != platforms.size())
             throw new Exception("Platform size should match the given size");
 
-        Vars.BYTE.encode(buf, size);
-        platforms.forEach(platform -> Vars.PLATFORM.encode(buf, platform));
+        buf.write(Vars.BYTE, size);
+        platforms.forEach(platform -> buf.write(Vars.PLATFORM, platform));
     }
 
     @Override
-    public void decode(ByteBuf buf) throws Exception {
+    public void decode(GamePacket buf) throws Exception {
         throw new NotImplementedException();
     }
 }

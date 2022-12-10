@@ -1,12 +1,17 @@
 package amsterdam.izak.progproj.network;
 
 import amsterdam.izak.progproj.GameServer;
-import amsterdam.izak.progproj.handlers.HandshakeHandler;
+import amsterdam.izak.progproj.network.packets.GamePacket;
 import amsterdam.izak.progproj.network.packets.IncomingPacketWrapper;
 import amsterdam.izak.progproj.network.packets.Packet;
-import amsterdam.izak.progproj.network.packets.game.*;
+import amsterdam.izak.progproj.network.packets.game.env.UpdateMapPacket;
+import amsterdam.izak.progproj.network.packets.game.env.UpdateTitlePacket;
+import amsterdam.izak.progproj.network.packets.game.env.UpdateUIPacket;
+import amsterdam.izak.progproj.network.packets.game.logic.KeepAlivePacket;
+import amsterdam.izak.progproj.network.packets.game.player.*;
 import amsterdam.izak.progproj.network.packets.handshake.LoginRequestPacket;
 import amsterdam.izak.progproj.network.packets.handshake.LoginResponsePacket;
+import amsterdam.izak.progproj.states.NetworkState;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.socket.DatagramPacket;
@@ -21,32 +26,32 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PacketManager {
-    private Map<GameState, BidiMap<Byte, Class<? extends Packet>>> incoming_packets = new ConcurrentHashMap<>();
-    private Map<GameState, BidiMap<Byte, Class<? extends Packet>>> outgoing_packets = new ConcurrentHashMap<>();
+    private Map<NetworkState, BidiMap<Byte, Class<? extends Packet>>> incoming_packets = new ConcurrentHashMap<>();
+    private Map<NetworkState, BidiMap<Byte, Class<? extends Packet>>> outgoing_packets = new ConcurrentHashMap<>();
     private Map<Class<? extends Packet>, Set<PacketHandler<? extends Packet>>> handlers;
 
     public PacketManager() {
         this.handlers = new HashMap<>();
 
         // Handshake
-        this.registerIn(GameState.HANDSHAKE, LoginRequestPacket.class);
-        this.registerOut(GameState.HANDSHAKE, LoginResponsePacket.class);
+        this.registerIn(NetworkState.HANDSHAKE, LoginRequestPacket.class);
+        this.registerOut(NetworkState.HANDSHAKE, LoginResponsePacket.class);
 
         // Game
-        this.registerIn(GameState.GAME, KeepAlivePacket.class)
-                .registerIn(GameState.GAME, ClientMovePacket.class)
-                .registerIn(GameState.GAME, QuitPacket.class);
-        this.registerOut(GameState.GAME, KeepAlivePacket.class)
-                .registerOut(GameState.GAME, AddPlayerPacket.class)
-                .registerOut(GameState.GAME, RemovePlayerPacket.class)
-                .registerOut(GameState.GAME, MovePlayerPacket.class)
-                .registerOut(GameState.GAME, UpdateMapPacket.class)
-                .registerOut(GameState.GAME, UpdateUIPacket.class)
-                .registerOut(GameState.GAME, SpectatePacket.class)
-                .registerOut(GameState.GAME, UpdateTitlePacket.class);
+        this.registerIn(NetworkState.GAME, KeepAlivePacket.class)
+                .registerIn(NetworkState.GAME, ClientMovePacket.class)
+                .registerIn(NetworkState.GAME, QuitPacket.class);
+        this.registerOut(NetworkState.GAME, KeepAlivePacket.class)
+                .registerOut(NetworkState.GAME, AddPlayerPacket.class)
+                .registerOut(NetworkState.GAME, RemovePlayerPacket.class)
+                .registerOut(NetworkState.GAME, MovePlayerPacket.class)
+                .registerOut(NetworkState.GAME, UpdateMapPacket.class)
+                .registerOut(NetworkState.GAME, UpdateUIPacket.class)
+                .registerOut(NetworkState.GAME, SpectatePacket.class)
+                .registerOut(NetworkState.GAME, UpdateTitlePacket.class);
     }
 
-    private PacketManager registerIn(GameState state, Class<? extends Packet> packet) {
+    private PacketManager registerIn(NetworkState state, Class<? extends Packet> packet) {
         if (!incoming_packets.containsKey(state))
             incoming_packets.put(state, new DualHashBidiMap<>());
 
@@ -57,7 +62,7 @@ public class PacketManager {
         return this;
     }
 
-    private PacketManager registerOut(GameState state, Class<? extends Packet> packet) {
+    private PacketManager registerOut(NetworkState state, Class<? extends Packet> packet) {
         if (!outgoing_packets.containsKey(state))
             outgoing_packets.put(state, new DualHashBidiMap<>());
 
@@ -68,7 +73,7 @@ public class PacketManager {
         return this;
     }
 
-    public Packet getPacket(GameState state, byte packetId) throws Exception {
+    public Packet getPacket(NetworkState state, byte packetId) throws Exception {
         Map<Byte, Class<? extends Packet>> packets = incoming_packets.get(state);
 
         if (!packets.containsKey(packetId))
@@ -77,7 +82,7 @@ public class PacketManager {
         return packets.get(packetId).getDeclaredConstructor().newInstance();
     }
 
-    public byte findOutgoingPacketId(GameState state, Packet packet) throws Exception {
+    public byte findOutgoingPacketId(NetworkState state, Packet packet) throws Exception {
         BidiMap<Byte, Class<? extends Packet>> packets = outgoing_packets.get(state);
 
         if (packets == null || !packets.containsValue(packet.getClass())) {
@@ -87,14 +92,16 @@ public class PacketManager {
         return packets.getKey(packet.getClass());
     }
 
-    public ByteBuf encodePacket(GameState state, Packet packet) throws Exception {
+    public ByteBuf encodePacket(NetworkState state, Packet packet) throws Exception {
         ByteBuf buf = Unpooled.buffer();
 
         byte packetId = findOutgoingPacketId(state, packet);
         buf.writeByte(packetId);
 
+        GamePacket gameBuf = new GamePacket(buf);
+
         // Encode packet
-        packet.encode(buf);
+        packet.encode(gameBuf);
 
         return buf;
     }
@@ -120,7 +127,7 @@ public class PacketManager {
         });
     }
 
-    public void sendRawPacket(InetSocketAddress address, GameState state, Packet packet) throws Exception {
+    public void sendRawPacket(InetSocketAddress address, NetworkState state, Packet packet) throws Exception {
         ByteBuf buf = encodePacket(state, packet);
         GameServer.getInstance().getChannel().writeAndFlush(new DatagramPacket(buf, address));
     }

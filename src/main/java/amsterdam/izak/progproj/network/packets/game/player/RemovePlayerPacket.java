@@ -1,9 +1,9 @@
-package amsterdam.izak.progproj.network.packets.game;
+package amsterdam.izak.progproj.network.packets.game.player;
 
 import amsterdam.izak.progproj.exceptions.NotImplementedException;
+import amsterdam.izak.progproj.network.packets.GamePacket;
 import amsterdam.izak.progproj.network.packets.Packet;
 import amsterdam.izak.progproj.network.types.Vars;
-import amsterdam.izak.progproj.players.Position;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,20 +14,16 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class AddPlayerPacket extends Packet  {
+public class RemovePlayerPacket  extends Packet {
     private int id;
-    private String username;
-    private Position position;
 
     @Override
-    public void encode(ByteBuf buf) throws Exception {
-        Vars.INT.encode(buf, id);
-        Vars.STRING.encode(buf, username);
-        Vars.POSITION.encode(buf, position);
+    public void encode(GamePacket buf) throws Exception {
+        buf.write(Vars.INT, id);
     }
 
     @Override
-    public void decode(ByteBuf buf) throws Exception {
+    public void decode(GamePacket buf) throws Exception {
         throw new NotImplementedException();
     }
 }

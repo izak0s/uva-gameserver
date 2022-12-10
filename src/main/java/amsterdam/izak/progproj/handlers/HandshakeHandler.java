@@ -1,17 +1,13 @@
 package amsterdam.izak.progproj.handlers;
 
 import amsterdam.izak.progproj.GameServer;
-import amsterdam.izak.progproj.network.GameState;
-import amsterdam.izak.progproj.network.PacketHandler;
+import amsterdam.izak.progproj.states.NetworkState;
 import amsterdam.izak.progproj.network.PacketManager;
-import amsterdam.izak.progproj.network.packets.IncomingPacketWrapper;
 import amsterdam.izak.progproj.network.packets.UnknownPacket;
-import amsterdam.izak.progproj.network.packets.game.AddPlayerPacket;
 import amsterdam.izak.progproj.network.packets.handshake.LoginRequestPacket;
 import amsterdam.izak.progproj.network.packets.handshake.LoginResponsePacket;
 import amsterdam.izak.progproj.players.Player;
 import amsterdam.izak.progproj.players.PlayerManager;
-import amsterdam.izak.progproj.players.Position;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.socket.DatagramPacket;
@@ -31,7 +27,7 @@ public class HandshakeHandler {
                 // Don't authenticate, send raw packet
                 packetManager.sendRawPacket(
                         packet.getAddress(),
-                        GameState.HANDSHAKE,
+                        NetworkState.HANDSHAKE,
                         new LoginResponsePacket(false, "Username already in use")
                 );
 
@@ -41,7 +37,7 @@ public class HandshakeHandler {
             Player player = playerManager.registerPlayer(username, packet.getAddress());
             System.out.println("Player " + username + " joined the server!");
             player.sendPacket(new LoginResponsePacket(true, ""));
-            player.setState(GameState.GAME);
+            player.setState(NetworkState.GAME);
 
             // Update Game state
             GameServer.getInstance().getGamePlayHandler().playerJoins(player);
@@ -51,6 +47,7 @@ public class HandshakeHandler {
         // Handle unknown packets
         packetManager.registerListener(UnknownPacket.class, packet -> {
             ByteBuf buf = Unpooled.buffer();
+            // Let the client know about the unknown packet or invalid state
             buf.writeByte(100);
 
             DatagramPacket out = new DatagramPacket(buf, packet.getAddress());

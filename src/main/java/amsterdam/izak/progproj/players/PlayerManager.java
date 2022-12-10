@@ -1,18 +1,17 @@
 package amsterdam.izak.progproj.players;
 
 import amsterdam.izak.progproj.GameServer;
-import amsterdam.izak.progproj.network.packets.game.RemovePlayerPacket;
+import amsterdam.izak.progproj.network.packets.game.player.RemovePlayerPacket;
 
 import java.net.InetSocketAddress;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PlayerManager {
-    private Map<Integer, Player> playerMap;
-    private Map<InetSocketAddress, Integer> connectionIdMap;
-    private Map<String, Integer> usernameIdMap;
+    private final Map<Integer, Player> playerMap;
+    private final Map<InetSocketAddress, Integer> connectionIdMap;
+    private final Map<String, Integer> usernameIdMap;
     private int nextId;
 
     public PlayerManager() {
@@ -41,7 +40,7 @@ public class PlayerManager {
         return connectionIdMap.containsKey(address);
     }
 
-    public Player getPlayer(InetSocketAddress address) throws Exception {
+    public Player getPlayer(InetSocketAddress address) {
         if (!connectionIdMap.containsKey(address))
             return null;
 

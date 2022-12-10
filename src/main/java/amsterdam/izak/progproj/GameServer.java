@@ -6,7 +6,6 @@ import amsterdam.izak.progproj.handlers.HandshakeHandler;
 import amsterdam.izak.progproj.network.ChannelInitializer;
 import amsterdam.izak.progproj.network.PacketManager;
 import amsterdam.izak.progproj.network.packets.Packet;
-import amsterdam.izak.progproj.network.packets.game.MovePlayerPacket;
 import amsterdam.izak.progproj.platforms.PlatformManager;
 import amsterdam.izak.progproj.players.Player;
 import amsterdam.izak.progproj.players.PlayerManager;
@@ -19,7 +18,6 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import lombok.Getter;
 
-import java.util.Timer;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -94,16 +92,6 @@ public class GameServer {
                 continue;
 
             player.sendPacket(packet);
-        }
-    }
-
-    public void updateGame() {
-        for (Player player : getPlayerManager().getPlayers()) {
-            try {
-
-            } catch (Exception e){
-                System.out.println("Failed to update player " + player.getUsername());
-            }
         }
     }
 }

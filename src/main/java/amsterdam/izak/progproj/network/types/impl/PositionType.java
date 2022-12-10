@@ -1,10 +1,8 @@
 package amsterdam.izak.progproj.network.types.impl;
 
 import amsterdam.izak.progproj.network.types.Type;
-import amsterdam.izak.progproj.players.Position;
+import amsterdam.izak.progproj.data.Position;
 import io.netty.buffer.ByteBuf;
-
-import java.util.Vector;
 
 public class PositionType implements Type<Position> {
     @Override

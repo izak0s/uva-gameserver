@@ -1,10 +1,17 @@
 package amsterdam.izak.progproj.handlers;
 
 import amsterdam.izak.progproj.GameServer;
-import amsterdam.izak.progproj.network.packets.game.*;
+import amsterdam.izak.progproj.network.packets.game.env.UpdateTitlePacket;
+import amsterdam.izak.progproj.network.packets.game.env.UpdateUIPacket;
+import amsterdam.izak.progproj.network.packets.game.player.AddPlayerPacket;
+import amsterdam.izak.progproj.network.packets.game.player.MovePlayerPacket;
+import amsterdam.izak.progproj.network.packets.game.player.RemovePlayerPacket;
+import amsterdam.izak.progproj.network.packets.game.player.SpectatePacket;
+import amsterdam.izak.progproj.states.GamePlayState;
+import amsterdam.izak.progproj.states.RoundState;
 import amsterdam.izak.progproj.platforms.PlatformManager;
 import amsterdam.izak.progproj.players.Player;
-import amsterdam.izak.progproj.players.Position;
+import amsterdam.izak.progproj.data.Position;
 
 import java.awt.*;
 import java.text.DecimalFormat;

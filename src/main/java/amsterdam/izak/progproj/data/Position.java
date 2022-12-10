@@ -1,4 +1,4 @@
-package amsterdam.izak.progproj.players;
+package amsterdam.izak.progproj.data;
 
 import lombok.*;
 

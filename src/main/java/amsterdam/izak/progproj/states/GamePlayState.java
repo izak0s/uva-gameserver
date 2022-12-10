@@ -1,4 +1,4 @@
-package amsterdam.izak.progproj.handlers;
+package amsterdam.izak.progproj.states;
 
 public enum GamePlayState {
     IDLE, COUNTING_DOWN, RUNNING

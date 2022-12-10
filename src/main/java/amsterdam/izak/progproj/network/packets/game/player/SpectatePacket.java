@@ -1,5 +1,6 @@
-package amsterdam.izak.progproj.network.packets.game;
+package amsterdam.izak.progproj.network.packets.game.player;
 
+import amsterdam.izak.progproj.network.packets.GamePacket;
 import amsterdam.izak.progproj.network.packets.Packet;
 import amsterdam.izak.progproj.network.types.Vars;
 import io.netty.buffer.ByteBuf;
@@ -16,12 +17,12 @@ public class SpectatePacket extends Packet  {
     private boolean enabled;
 
     @Override
-    public void encode(ByteBuf buf) throws Exception {
-        Vars.BOOLEAN.encode(buf, this.enabled);
+    public void encode(GamePacket buf) throws Exception {
+        buf.write(Vars.BOOLEAN, this.enabled);
     }
 
     @Override
-    public void decode(ByteBuf buf) throws Exception {
+    public void decode(GamePacket buf) throws Exception {
 
     }
 }

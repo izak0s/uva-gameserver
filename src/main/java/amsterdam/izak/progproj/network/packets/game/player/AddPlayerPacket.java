@@ -1,9 +1,10 @@
-package amsterdam.izak.progproj.network.packets.handshake;
+package amsterdam.izak.progproj.network.packets.game.player;
 
 import amsterdam.izak.progproj.exceptions.NotImplementedException;
 import amsterdam.izak.progproj.network.packets.GamePacket;
 import amsterdam.izak.progproj.network.packets.Packet;
 import amsterdam.izak.progproj.network.types.Vars;
+import amsterdam.izak.progproj.data.Position;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,19 +15,20 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class LoginResponsePacket extends Packet {
-    private boolean authenticated;
-    private String message;
+public class AddPlayerPacket extends Packet  {
+    private int id;
+    private String username;
+    private Position position;
 
     @Override
-    public void encode(GamePacket buf) {
-        buf.write(Vars.BOOLEAN, authenticated);
-        buf.write(Vars.STRING,  message);
+    public void encode(GamePacket buf) throws Exception {
+        buf.write(Vars.INT, id);
+        buf.write(Vars.STRING, username);
+        buf.write(Vars.POSITION, position);
     }
 
     @Override
-    public void decode(GamePacket buf) throws NotImplementedException {
+    public void decode(GamePacket buf) throws Exception {
         throw new NotImplementedException();
     }
 }
-
