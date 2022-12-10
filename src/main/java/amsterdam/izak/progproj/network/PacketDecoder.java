@@ -28,10 +28,12 @@ public class PacketDecoder extends MessageToMessageDecoder<DatagramPacket> {
         Player player = GameServer.getInstance().getPlayerManager().getPlayer(dg.sender());
         NetworkState state = player == null ? NetworkState.HANDSHAKE : NetworkState.GAME;
 
+        // Decode packet ID
         byte packet_id = Vars.BYTE.decode(buf);
         Packet packet = GameServer.getInstance().getPacketManager()
                 .getPacket(state, packet_id);
 
+        // Handle unknown packet
         if (packet == null) {
             if (player == null) {
                 list.add(new IncomingPacketWrapper<>(null, dg.sender(), new UnknownPacket()));
@@ -46,6 +48,7 @@ public class PacketDecoder extends MessageToMessageDecoder<DatagramPacket> {
             // Decode packet
             packet.decode(new GamePacket(buf));
         } catch (IndexOutOfBoundsException e) {
+            // Malformed unauthenticated packet
             if (player == null) {
                 list.add(new IncomingPacketWrapper<>(null, dg.sender(), new UnknownPacket()));
 
@@ -55,6 +58,7 @@ public class PacketDecoder extends MessageToMessageDecoder<DatagramPacket> {
             throw e;
         }
 
+        // Too many bytes packet
         if (buf.readableBytes() != 0) {
             if (player == null) {
                 list.add(new IncomingPacketWrapper<>(null, dg.sender(), new UnknownPacket()));
@@ -65,13 +69,11 @@ public class PacketDecoder extends MessageToMessageDecoder<DatagramPacket> {
             throw new Exception("Malformed packet: " + packet_id);
         }
 
-        IncomingPacketWrapper wrapper = new IncomingPacketWrapper(player, dg.sender(), packet);
-
-        list.add(wrapper);
+        list.add(new IncomingPacketWrapper(player, dg.sender(), packet));
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         cause.printStackTrace();
     }
 }

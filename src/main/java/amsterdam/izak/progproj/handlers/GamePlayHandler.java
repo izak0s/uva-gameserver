@@ -28,24 +28,33 @@ public class GamePlayHandler {
     private float counter;
     private int roundNumber = 0;
     private float timeVisible;
+    private final DecimalFormat df;
 
     public GamePlayHandler() {
         this.state = GamePlayState.IDLE;
         platforms = GameServer.getInstance().getPlatformManager();
         timeVisible = 5f;
-    }
 
+        // Init DecimalFormat
+        df = new DecimalFormat();
+        df.setMaximumFractionDigits(2);
+        df.setMinimumFractionDigits(2);
+    }
 
     public void tick() {
         long now = System.currentTimeMillis();
 
         try {
             Collection<Player> players = game().getPlayerManager().getPlayers();
+
+            // Start countdown when players  are waiting
             if (state.equals(GamePlayState.IDLE) && !players.isEmpty()) {
                 state = GamePlayState.COUNTING_DOWN;
-                counter = 10;
+                counter = 15;
                 System.out.println("Start counting down");
-            } else if ((state.equals(GamePlayState.COUNTING_DOWN)
+            }
+            // Change to idle when all players left
+            else if ((state.equals(GamePlayState.COUNTING_DOWN)
                     || state.equals(GamePlayState.RUNNING)) && players.isEmpty()) {
                 state = GamePlayState.IDLE;
                 System.out.println("Changing game state to idle");
@@ -56,12 +65,10 @@ public class GamePlayHandler {
             if (state.equals(GamePlayState.COUNTING_DOWN)) {
                 if (counter <= 0) {
                     state = GamePlayState.RUNNING;
-
-                    platforms.randomizeMap().sendMap();
+                    alive.addAll(game().getPlayerManager().getPlayers());
 
                     System.out.println("Start game");
-
-                    alive.addAll(game().getPlayerManager().getPlayers());
+                    platforms.randomizeMap().sendMap();
 
                     counter = timeVisible;
                     roundState = RoundState.SHOW_MAP;
@@ -199,19 +206,17 @@ public class GamePlayHandler {
 
             alive.clear();
             platforms.sendDefaultMap();
-
         } else if (state.equals(GamePlayState.COUNTING_DOWN)) {
-            player.sendPacket(
-                    new UpdateUIPacket(new Color(52, 73, 94), "Waiting")
-            );
-
-
-            DecimalFormat df = new DecimalFormat();
-            df.setMaximumFractionDigits(2);
-            df.setMinimumFractionDigits(2);
             if (counter <= 0) counter = 0;
 
-            player.sendPacket(new UpdateTitlePacket("Waiting for players..", "Starting in: " + df.format(counter)));
+            // Send packets
+            player.sendPacket(new UpdateUIPacket(
+                    new Color(52, 73, 94), "Waiting")
+            );
+            player.sendPacket(new UpdateTitlePacket(
+                    "Waiting for players..",
+                    "Starting in: " + df.format(counter)
+            ));
         } else if (state.equals(GamePlayState.RUNNING)) {
             switch (roundState) {
                 case SHOW_MAP -> {
@@ -246,6 +251,7 @@ public class GamePlayHandler {
         System.out.println("Player " + player.getUsername() + " died!");
         player.sendPacket(new SpectatePacket(true));
 
+        // Only one alive!
         if (alive.size() == 1) {
             System.out.println("Player " + player.getUsername() + " won!");
             roundState = RoundState.WINNER;
@@ -258,9 +264,9 @@ public class GamePlayHandler {
     }
 
     public void resetGame() throws Exception {
+        // Disable spectator mode & reset map
         game().sendToAll(new SpectatePacket(false));
-        platforms.resetPlatforms();
-        platforms.sendDefaultMap();
+        platforms.resetPlatforms().sendDefaultMap();
 
         // Reset parameters
         state = GamePlayState.IDLE;

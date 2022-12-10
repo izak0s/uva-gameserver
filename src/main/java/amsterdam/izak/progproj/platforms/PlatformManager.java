@@ -70,9 +70,7 @@ public class PlatformManager {
     }
 
     public Color pickColor() {
-        currentColor = availableColors.get(random.nextInt(availableColors.size()));
-
-        return currentColor;
+        return availableColors.get(random.nextInt(availableColors.size()));
     }
 
     public void pickPlatformsWithColor() throws Exception {
@@ -88,6 +86,5 @@ public class PlatformManager {
 
         return this;
     }
-
 
 }

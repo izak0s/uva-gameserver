@@ -56,7 +56,6 @@ public class PacketManager {
             incoming_packets.put(state, new DualHashBidiMap<>());
 
         int size = this.incoming_packets.get(state).size();
-
         this.incoming_packets.get(state).put((byte) size, packet);
 
         return this;
@@ -67,7 +66,6 @@ public class PacketManager {
             outgoing_packets.put(state, new DualHashBidiMap<>());
 
         int size = this.outgoing_packets.get(state).size();
-
         this.outgoing_packets.get(state).put((byte) size, packet);
 
         return this;
