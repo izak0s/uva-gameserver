@@ -70,7 +70,7 @@ public class PlatformManager {
     }
 
     public Color pickColor() {
-        return availableColors.get(random.nextInt(availableColors.size()));
+        return (currentColor = availableColors.get(random.nextInt(availableColors.size())));
     }
 
     public void pickPlatformsWithColor() throws Exception {
