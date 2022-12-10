@@ -4,8 +4,10 @@ import amsterdam.izak.progproj.exceptions.NotImplementedException;
 import amsterdam.izak.progproj.network.packets.GamePacket;
 import amsterdam.izak.progproj.network.packets.Packet;
 import amsterdam.izak.progproj.network.types.Vars;
-import io.netty.buffer.ByteBuf;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 @Accessors(chain = true)

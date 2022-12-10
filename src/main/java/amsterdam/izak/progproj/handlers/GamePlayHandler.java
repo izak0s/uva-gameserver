@@ -1,17 +1,17 @@
 package amsterdam.izak.progproj.handlers;
 
 import amsterdam.izak.progproj.GameServer;
+import amsterdam.izak.progproj.data.Position;
 import amsterdam.izak.progproj.network.packets.game.env.UpdateTitlePacket;
 import amsterdam.izak.progproj.network.packets.game.env.UpdateUIPacket;
 import amsterdam.izak.progproj.network.packets.game.player.AddPlayerPacket;
 import amsterdam.izak.progproj.network.packets.game.player.MovePlayerPacket;
 import amsterdam.izak.progproj.network.packets.game.player.RemovePlayerPacket;
 import amsterdam.izak.progproj.network.packets.game.player.SpectatePacket;
-import amsterdam.izak.progproj.states.GamePlayState;
-import amsterdam.izak.progproj.states.RoundState;
 import amsterdam.izak.progproj.platforms.PlatformManager;
 import amsterdam.izak.progproj.players.Player;
-import amsterdam.izak.progproj.data.Position;
+import amsterdam.izak.progproj.states.GamePlayState;
+import amsterdam.izak.progproj.states.RoundState;
 
 import java.awt.*;
 import java.text.DecimalFormat;
@@ -21,15 +21,13 @@ import java.util.Optional;
 import java.util.Set;
 
 public class GamePlayHandler {
+    private final Set<Player> alive = new HashSet<>();
+    private final PlatformManager platforms;
     private GamePlayState state;
     private RoundState roundState;
-
     private float counter;
-    private Set<Player> alive = new HashSet<>();
     private int roundNumber = 0;
     private float timeVisible;
-
-    private final PlatformManager platforms;
 
     public GamePlayHandler() {
         this.state = GamePlayState.IDLE;
@@ -202,7 +200,6 @@ public class GamePlayHandler {
             alive.clear();
             platforms.sendDefaultMap();
 
-            return;
         } else if (state.equals(GamePlayState.COUNTING_DOWN)) {
             player.sendPacket(
                     new UpdateUIPacket(new Color(52, 73, 94), "Waiting")
@@ -212,7 +209,7 @@ public class GamePlayHandler {
             DecimalFormat df = new DecimalFormat();
             df.setMaximumFractionDigits(2);
             df.setMinimumFractionDigits(2);
-            if  (counter <= 0) counter = 0;
+            if (counter <= 0) counter = 0;
 
             player.sendPacket(new UpdateTitlePacket("Waiting for players..", "Starting in: " + df.format(counter)));
         } else if (state.equals(GamePlayState.RUNNING)) {

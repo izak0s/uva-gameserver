@@ -32,13 +32,13 @@ public class GameServer {
     private final PlayerManager playerManager;
     @Getter
     private final PlatformManager platformManager;
+    private final int ticks = 20;
+    private final ScheduledFuture gameLoop;
+    @Getter
+    private final GamePlayHandler gamePlayHandler;
     @Getter
     private Channel channel;
     private EventLoopGroup workerGroup;
-    private final int ticks = 20;
-    private ScheduledFuture gameLoop;
-    @Getter
-    private GamePlayHandler gamePlayHandler;
 
     public GameServer() {
         GameServer.instance = this;

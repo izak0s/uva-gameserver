@@ -1,7 +1,7 @@
 package amsterdam.izak.progproj.network.packets;
 
-import amsterdam.izak.progproj.states.NetworkState;
 import amsterdam.izak.progproj.players.Player;
+import amsterdam.izak.progproj.states.NetworkState;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -14,11 +14,11 @@ public class IncomingPacketWrapper<T extends Packet> {
     private InetSocketAddress address;
     private T packet;
 
-    public NetworkState getState(){
+    public NetworkState getState() {
         return this.isAuthenticated() ? NetworkState.GAME : NetworkState.HANDSHAKE;
     }
 
-    public boolean isAuthenticated(){
+    public boolean isAuthenticated() {
         return player != null;
     }
 

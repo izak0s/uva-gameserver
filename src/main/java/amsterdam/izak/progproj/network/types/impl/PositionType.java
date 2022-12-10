@@ -1,7 +1,7 @@
 package amsterdam.izak.progproj.network.types.impl;
 
-import amsterdam.izak.progproj.network.types.Type;
 import amsterdam.izak.progproj.data.Position;
+import amsterdam.izak.progproj.network.types.Type;
 import io.netty.buffer.ByteBuf;
 
 public class PositionType implements Type<Position> {

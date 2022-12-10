@@ -45,7 +45,7 @@ public class PacketDecoder extends MessageToMessageDecoder<DatagramPacket> {
         try {
             // Decode packet
             packet.decode(new GamePacket(buf));
-        } catch (IndexOutOfBoundsException e){
+        } catch (IndexOutOfBoundsException e) {
             if (player == null) {
                 list.add(new IncomingPacketWrapper<>(null, dg.sender(), new UnknownPacket()));
 
@@ -55,7 +55,7 @@ public class PacketDecoder extends MessageToMessageDecoder<DatagramPacket> {
             throw e;
         }
 
-        if (buf.readableBytes() != 0){
+        if (buf.readableBytes() != 0) {
             if (player == null) {
                 list.add(new IncomingPacketWrapper<>(null, dg.sender(), new UnknownPacket()));
 

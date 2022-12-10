@@ -4,7 +4,6 @@ import amsterdam.izak.progproj.exceptions.NotImplementedException;
 import amsterdam.izak.progproj.network.packets.GamePacket;
 import amsterdam.izak.progproj.network.packets.Packet;
 import amsterdam.izak.progproj.network.types.Vars;
-import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +13,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class UpdateTitlePacket extends Packet  {
+public class UpdateTitlePacket extends Packet {
     private String title;
     private String subtitle;
 

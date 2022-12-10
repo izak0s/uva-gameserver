@@ -49,7 +49,7 @@ public class PlayerManager {
         return playerMap.get(id);
     }
 
-    public Collection<Player> getPlayers(){
+    public Collection<Player> getPlayers() {
         return this.playerMap.values();
     }
 

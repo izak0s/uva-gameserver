@@ -1,13 +1,13 @@
 package amsterdam.izak.progproj.handlers;
 
 import amsterdam.izak.progproj.GameServer;
-import amsterdam.izak.progproj.states.NetworkState;
 import amsterdam.izak.progproj.network.PacketManager;
 import amsterdam.izak.progproj.network.packets.UnknownPacket;
 import amsterdam.izak.progproj.network.packets.handshake.LoginRequestPacket;
 import amsterdam.izak.progproj.network.packets.handshake.LoginResponsePacket;
 import amsterdam.izak.progproj.players.Player;
 import amsterdam.izak.progproj.players.PlayerManager;
+import amsterdam.izak.progproj.states.NetworkState;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.socket.DatagramPacket;

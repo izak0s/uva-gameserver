@@ -12,15 +12,15 @@ import java.util.List;
 import java.util.Random;
 
 public class PlatformManager {
+    public final Color defaultColor = new Color(52, 73, 94);
     private final byte size = 5;
     private final List<Platform> platforms;
     private final List<Platform> defaultPlatform;
     private final List<Color> availableColors;
     private final List<Color> assignedColors;
+    private final Random random;
     @Getter
     private Color currentColor;
-    public final Color defaultColor = new Color(52, 73, 94);
-    private final Random random;
 
 
     public PlatformManager() {
@@ -88,7 +88,6 @@ public class PlatformManager {
 
         return this;
     }
-
 
 
 }

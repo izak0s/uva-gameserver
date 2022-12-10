@@ -5,7 +5,6 @@ import amsterdam.izak.progproj.exceptions.NotImplementedException;
 import amsterdam.izak.progproj.network.packets.GamePacket;
 import amsterdam.izak.progproj.network.packets.Packet;
 import amsterdam.izak.progproj.network.types.Vars;
-import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,8 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class UpdateMapPacket extends Packet
-{
+public class UpdateMapPacket extends Packet {
     private byte size;
     private List<Platform> platforms;
 

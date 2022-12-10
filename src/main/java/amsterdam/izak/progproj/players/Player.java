@@ -2,8 +2,8 @@ package amsterdam.izak.progproj.players;
 
 import amsterdam.izak.progproj.GameServer;
 import amsterdam.izak.progproj.data.Position;
-import amsterdam.izak.progproj.states.NetworkState;
 import amsterdam.izak.progproj.network.packets.Packet;
+import amsterdam.izak.progproj.states.NetworkState;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.socket.DatagramPacket;
 import lombok.Getter;
@@ -27,15 +27,15 @@ public class Player {
         this.address = address;
         this.username = username;
         this.currentState = NetworkState.HANDSHAKE;
-        this.position = new Position(0,0,0);
+        this.position = new Position(0, 0, 0);
         this.updateLastPacket();
     }
 
-    public void updateLastPacket(){
+    public void updateLastPacket() {
         lastPacket = System.currentTimeMillis();
     }
 
-    public void setState(NetworkState state){
+    public void setState(NetworkState state) {
         this.currentState = state;
     }
 

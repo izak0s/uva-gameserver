@@ -6,9 +6,9 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 public class InboundPacketChannelHandler extends SimpleChannelInboundHandler<IncomingPacketWrapper> {
-    private PacketManager manager;
+    private final PacketManager manager;
 
-    public InboundPacketChannelHandler(){
+    public InboundPacketChannelHandler() {
         this.manager = GameServer.getInstance().getPacketManager();
     }
 

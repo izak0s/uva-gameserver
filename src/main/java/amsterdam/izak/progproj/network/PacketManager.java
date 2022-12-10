@@ -26,9 +26,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PacketManager {
-    private Map<NetworkState, BidiMap<Byte, Class<? extends Packet>>> incoming_packets = new ConcurrentHashMap<>();
-    private Map<NetworkState, BidiMap<Byte, Class<? extends Packet>>> outgoing_packets = new ConcurrentHashMap<>();
-    private Map<Class<? extends Packet>, Set<PacketHandler<? extends Packet>>> handlers;
+    private final Map<NetworkState, BidiMap<Byte, Class<? extends Packet>>> incoming_packets = new ConcurrentHashMap<>();
+    private final Map<NetworkState, BidiMap<Byte, Class<? extends Packet>>> outgoing_packets = new ConcurrentHashMap<>();
+    private final Map<Class<? extends Packet>, Set<PacketHandler<? extends Packet>>> handlers;
 
     public PacketManager() {
         this.handlers = new HashMap<>();

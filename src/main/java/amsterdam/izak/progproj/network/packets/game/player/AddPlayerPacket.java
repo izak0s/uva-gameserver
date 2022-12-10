@@ -1,11 +1,10 @@
 package amsterdam.izak.progproj.network.packets.game.player;
 
+import amsterdam.izak.progproj.data.Position;
 import amsterdam.izak.progproj.exceptions.NotImplementedException;
 import amsterdam.izak.progproj.network.packets.GamePacket;
 import amsterdam.izak.progproj.network.packets.Packet;
 import amsterdam.izak.progproj.network.types.Vars;
-import amsterdam.izak.progproj.data.Position;
-import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +14,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class AddPlayerPacket extends Packet  {
+public class AddPlayerPacket extends Packet {
     private int id;
     private String username;
     private Position position;
