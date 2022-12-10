@@ -12,6 +12,7 @@ import amsterdam.izak.progproj.platforms.PlatformManager;
 import amsterdam.izak.progproj.players.Player;
 import amsterdam.izak.progproj.states.GamePlayState;
 import amsterdam.izak.progproj.states.RoundState;
+import amsterdam.izak.progproj.utils.GameLog;
 
 import java.awt.*;
 import java.text.DecimalFormat;
@@ -51,13 +52,13 @@ public class GamePlayHandler {
             if (state.equals(GamePlayState.IDLE) && !players.isEmpty()) {
                 state = GamePlayState.COUNTING_DOWN;
                 counter = 15;
-                System.out.println("Start counting down");
+                GameLog.debug("Start counting down");
             }
             // Change to idle when all players left
             else if ((state.equals(GamePlayState.COUNTING_DOWN)
                     || state.equals(GamePlayState.RUNNING)) && players.isEmpty()) {
                 state = GamePlayState.IDLE;
-                System.out.println("Changing game state to idle");
+                GameLog.debug("Changing game state to idle");
                 resetGame();
             }
 
@@ -67,7 +68,7 @@ public class GamePlayHandler {
                     state = GamePlayState.RUNNING;
                     alive.addAll(game().getPlayerManager().getPlayers());
 
-                    System.out.println("Start game");
+                    GameLog.debug("Start game");
                     platforms.randomizeMap().sendMap();
 
                     counter = timeVisible;
@@ -146,7 +147,7 @@ public class GamePlayHandler {
                         }
                     }
                 } catch (Exception e) {
-                    System.out.println("Failed to update player " + player.getUsername());
+                    GameLog.error("Failed to update player " + player.getUsername());
                     e.printStackTrace();
                 }
             }
@@ -248,12 +249,12 @@ public class GamePlayHandler {
         if (!alive.contains(player))
             return;
 
-        System.out.println("Player " + player.getUsername() + " died!");
+        GameLog.info("Player " + player.getUsername() + " died!");
         player.sendPacket(new SpectatePacket(true));
 
         // Only one alive!
         if (alive.size() == 1) {
-            System.out.println("Player " + player.getUsername() + " won!");
+            GameLog.info("Player " + player.getUsername() + " won!");
             roundState = RoundState.WINNER;
             counter = 5f;
             updateAllStates();

@@ -2,6 +2,7 @@ package amsterdam.izak.progproj.players;
 
 import amsterdam.izak.progproj.GameServer;
 import amsterdam.izak.progproj.network.packets.game.player.RemovePlayerPacket;
+import amsterdam.izak.progproj.utils.GameLog;
 
 import java.net.InetSocketAddress;
 import java.util.Collection;
@@ -54,7 +55,7 @@ public class PlayerManager {
     }
 
     public void removePlayer(Player player) throws Exception {
-        System.out.println(player.getUsername() + " left");
+        GameLog.info(player.getUsername() + " left");
         RemovePlayerPacket removePlayerPacket = new RemovePlayerPacket(player.getId());
         GameServer.getInstance().sendToAll(removePlayerPacket);
         GameServer.getInstance().getGamePlayHandler().playerDie(player);

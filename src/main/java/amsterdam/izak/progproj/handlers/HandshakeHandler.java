@@ -8,6 +8,7 @@ import amsterdam.izak.progproj.network.packets.handshake.LoginResponsePacket;
 import amsterdam.izak.progproj.players.Player;
 import amsterdam.izak.progproj.players.PlayerManager;
 import amsterdam.izak.progproj.states.NetworkState;
+import amsterdam.izak.progproj.utils.GameLog;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.socket.DatagramPacket;
@@ -35,7 +36,7 @@ public class HandshakeHandler {
             }
 
             Player player = playerManager.registerPlayer(username, packet.getAddress());
-            System.out.println("Player " + username + " joined the server!");
+            GameLog.info("Player " + username + " joined the server!");
             player.sendPacket(new LoginResponsePacket(true, ""));
             player.setState(NetworkState.GAME);
 
